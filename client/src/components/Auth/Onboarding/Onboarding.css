@@ -1,0 +1,32 @@
+.onboarding-form {
+background: rgba(13, 13, 13, 0.5);
+border-radius: 20px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(11.8px);
+-webkit-backdrop-filter: blur(11.8px);
+border: 1px solid rgba(36, 36, 36, 1);
+}
+
+.onboarding-form-2 {
+border-radius: 20px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+border: 1px solid rgba(36, 36, 36, 1);
+}
+
+.gradient-border {
+    position: absolute;
+    border-radius: inherit;
+    background:linear-gradient(360deg,rgb(143,209,255) 0%, rgb(183,0,255) 90%);
+    opacity:0.7;
+    filter: blur(15px);
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    z-index: -1;
+      animation: rotateGradient 6s linear infinite;
+
+}
+
+
+
