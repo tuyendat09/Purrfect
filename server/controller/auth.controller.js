@@ -19,7 +19,7 @@ exports.handleRegister = asyncHandler(async (req, res) => {
       case "USER_EXIST":
         message = "Looks like you already have an account.";
         break;
-      case "PASSWORD_INVALID":
+      case "INVALID_PASSWORD":
         message = "Oops! That password doesn't look right.";
         break;
     }

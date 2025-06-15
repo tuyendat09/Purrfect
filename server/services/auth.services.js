@@ -41,7 +41,7 @@ exports.updateTempUser = async (existingTempUser, newUserData, otp) => {
 };
 
 exports.createOrUpdateTempUser = async (newUserData, otp) => {
-  const existingTempUser = await this.isTempUserExist(newUserData.email);
+  const existingTempUser = await TempUser.findOne({ email: newUserData.email });
 
   if (existingTempUser) {
     return this.updateTempUser(existingTempUser, newUserData, otp);
