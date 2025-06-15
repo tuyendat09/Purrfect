@@ -64,7 +64,7 @@ export default function OTPInput({ otp, setOtp }: OTPInputProps) {
         <input
           key={index}
           type="text"
-          className="border-[#242424] bg-gray focus-within:outline-gray-400 size-13 rounded-lg border text-center text-black drop-shadow-sm"
+          className="border-[#242424] bg-gray focus-within:outline-gray-400 size-13 rounded-lg border text-center  drop-shadow-sm"
           value={value !== undefined ? value : ""}
           onChange={(e) => handleChange(e, index)}
           onKeyDown={(e) => handleKeyDown(e, index)}

@@ -1,4 +1,4 @@
-import { IconProps } from "@/types/Icon";
+import { IconProps } from "@/shared/types/Icon";
 
 export default function EyesOpen({ className }: IconProps) {
   return (

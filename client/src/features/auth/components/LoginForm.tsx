@@ -1,6 +1,6 @@
-import FloatingInput from "@/components/UI/Input/FloatingInput";
+import FloatingInput from "@/shared/components/Input/FloatingInput";
 import LoginFormHeader from "./LoginFormHeader";
-import Button from "@/components/UI/Button";
+import Button from "@/shared/components/Button";
 import { clsx } from "clsx";
 
 export default function LoginForm() {

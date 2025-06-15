@@ -3,11 +3,11 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import "./Login/Login.css";
-import { useAnimationContext } from "./store/LoginContext";
+import "../../../features/auth/components/Login.css";
+import { useAuthTransitionContext } from "../../context/AuthTransitionContext";
 
-export default function PageTransition() {
-  const { animate } = useAnimationContext();
+export default function AuthPageTransition() {
+  const { animate } = useAuthTransitionContext();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

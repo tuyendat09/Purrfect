@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { EyesOpen, EyesClose } from "@/components/UI/Icon/index"; // Đảm bảo bạn import đúng icon
+import { EyesOpen, EyesClose } from "@/shared/components/Icon/index"; // Ensure correct icon imports
 
-interface FloatingInputProps {
+// Props for the FloatingInput component, extending all standard input attributes
+interface FloatingInputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  name: string;
   label: string;
-  type?: "text" | "email" | "url" | "password" | "tel" | "search" | "file";
   errorMessage?: string;
   classNames?: string;
   endContent?: React.ReactNode;
@@ -19,17 +21,19 @@ const PasswordToggleIcon = ({ show }: { show: boolean }) =>
   );
 
 export default function FloatingInput({
+  name,
   label,
   errorMessage,
   classNames = "",
   endContent,
   type = "text",
+  ...inputProps // Accepts all other input props
 }: FloatingInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
+  // Toggles password visibility
   function handleTogglePassword() {
     setShowPassword((prev) => !prev);
-    console.log("click");
   }
 
   const isPassword = type === "password";
@@ -42,19 +46,21 @@ export default function FloatingInput({
       )}
       <input
         type={inputType}
-        id={label}
+        id={name}
         placeholder=" "
+        name={name}
         className="peer block w-full rounded-full px-6 py-5 text-sm text-white bg-[#1d1d1d] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600"
+        {...inputProps} // Spread additional props to the input element
       />
       <label
-        htmlFor={label}
+        htmlFor={name}
         className="absolute text-sm text-[#aaaaaa] duration-300 transform scale-75 cursor-text -translate-y-4 top-5 z-0 origin-[0] start-6
           peer-placeholder-shown:scale-100
           peer-placeholder-shown:translate-y-0
           peer-focus:scale-75
-          peer-focus:-translate-y-3.5
+          peer-focus:-translate-y-4
           peer-[&:not(:placeholder-shown)]:scale-75
-          peer-[&:not(:placeholder-shown)]:-translate-y-3.5"
+          peer-[&:not(:placeholder-shown)]:-translate-y-4"
       >
         {label}
       </label>

@@ -1,11 +1,11 @@
 "use client";
 
-import Logo from "@/components/UI/Logo";
-import { useAnimationContext } from "../store/LoginContext";
+import Logo from "@/shared/components/Logo";
+import { useAuthTransitionContext } from "../../../shared/context/AuthTransitionContext";
 import { clsx } from "clsx";
 
 export default function LoginFormHeader() {
-  const { animate, handleTransition } = useAnimationContext();
+  const { animate, handleTransition } = useAuthTransitionContext();
 
   return (
     <div className="mb-[59px] flex flex-col items-center">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import StoreProvider from "../StoreProvider";
 import "../globals.css";
+import { Toaster } from "react-hot-toast";
 
 const dmSANS = DM_Sans({
   variable: "--font-dm-sans",
@@ -32,7 +33,20 @@ export default function RootLayout({
       lang="en"
     >
       <body>
-        <StoreProvider>{children}</StoreProvider>
+        <StoreProvider>
+          <Toaster
+            position="bottom-center" // Đặt toaster ở giữa dưới
+            toastOptions={{
+              className: `
+            !bg-black 
+            !text-white 
+            !rounded-full 
+            !text-[14px]
+       `,
+            }}
+          />
+          {children}
+        </StoreProvider>
       </body>
     </html>
   );

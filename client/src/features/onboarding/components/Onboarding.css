@@ -1,0 +1,12 @@
+.onboarding-form {
+background: rgba(13, 13, 13, 0.5);
+border-radius: 20px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(11.8px);
+-webkit-backdrop-filter: blur(11.8px);
+border: 1px solid rgba(36, 36, 36, 1);
+}
+
+
+
+

@@ -9,10 +9,13 @@
 @theme  {
   --font-sans: var(--font-dm-sans);
   --font-serif: var(--font-playfair);
-  --color-black: #0d0d0d;
-  --color-gray-text:#727170;
-  --color-gray:#e8e7e5;
-  --color-gray-darker:#edecea
+  --color-black: #1d1d1d;
+  --color-gray-neutral-100: #edecea;
+  --color-gray-neutral-200: #e8e7e5;
+  --color-gray-neutral-300: #dbdad8;
+  --color-gray-neutral-400: #aaaaaa;
+  --color-gray-neutral-500: #727170;
+  --color-gray-neutral-600: #69696c;
 }
 
 .container {
