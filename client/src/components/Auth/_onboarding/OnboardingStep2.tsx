@@ -4,9 +4,9 @@ import Button from "@/shared/components/Button";
 import { Icon } from "@iconify/react";
 import OTPInput from "@/shared/components/Input/OTPInput";
 import { useState, useRef, useEffect } from "react";
-import { useOnboardingStepContext } from "../context/OnboardingStepContext";
 import { gsap } from "gsap";
-import useOnboardingStep2 from "../hooks/useOnboardingStep2";
+import useOnboardingStep2 from "./hooks/useOnboardingStep2";
+import { useOnboardingStepContext } from "./context/OnboardingStepContext";
 
 export default function OnboardingFormStep2() {
   const { formik } = useOnboardingStep2();
@@ -94,7 +94,11 @@ export default function OnboardingFormStep2() {
             <OTPInput otp={otp} setOtp={setOtp} />
           </div>
           <div className="translate-y-8 absolute bottom-0 left-1/2 -translate-x-1/2 ">
-            <Button ref={buttonRef} className=" scale-0 origin-bottom ">
+            <Button
+              size="lg"
+              ref={buttonRef}
+              className=" scale-0 origin-bottom "
+            >
               <Icon icon="stash:chevron-right-duotone" width="24" height="24" />
             </Button>
           </div>

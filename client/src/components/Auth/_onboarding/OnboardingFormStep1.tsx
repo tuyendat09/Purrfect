@@ -3,9 +3,9 @@ import FloatingInput from "@/shared/components/Input/FloatingInput";
 import "./Onboarding.css";
 import FormHeader from "@/shared/components/Form/FormHeader";
 import Button from "@/shared/components/Button";
-import useOnboardingStep1 from "../hooks/useOnboardingStep1";
 import { clsx } from "clsx";
-import { useOnboardingStepContext } from "../context/OnboardingStepContext";
+import useOnboardingStep1 from "./hooks/useOnboardingStep1";
+import { useOnboardingStepContext } from "./context/OnboardingStepContext";
 
 export default function OnboardingFormStep1() {
   const { formik, isFormHidden, isButtonHidden } = useOnboardingStep1();
@@ -55,6 +55,7 @@ export default function OnboardingFormStep1() {
           <button />
         </form>
         <Button
+          size="lg"
           onClick={() => formik.handleSubmit()}
           type="button"
           className={clsx("w-full duration-500 mt-auto", {

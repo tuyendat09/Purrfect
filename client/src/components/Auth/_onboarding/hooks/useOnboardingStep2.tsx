@@ -3,7 +3,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useOnboardingStepContext } from "../context/OnboardingStepContext";
 import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
 
 interface errorsValues {
   email: string;
@@ -13,14 +12,14 @@ interface errorsValues {
 }
 
 export default function useOnboardingStep2() {
-  const router = useRouter();
+  const { setStep } = useOnboardingStepContext();
 
   const { email } = useOnboardingStepContext();
   const mutation = useMutation({
     mutationFn: verifyOTP,
     onSuccess: () => {
       setTimeout(() => {
-        router.push("/");
+        setStep(3);
       }, 2000);
     },
   });

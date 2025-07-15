@@ -42,6 +42,7 @@ export default function RootLayout({
             !text-white 
             !rounded-full 
             !text-[14px]
+            !max-w-[800px]
        `,
             }}
           />

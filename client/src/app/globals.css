@@ -2,14 +2,14 @@
 
 
 :root {
-  --background: #f5f4f2;
+  --background: hsl(40, 13%, 95%);
   --foreground: #171717;
 }
 
 @theme  {
   --font-sans: var(--font-dm-sans);
   --font-serif: var(--font-playfair);
-  --color-black: #1d1d1d;
+  --color-black: #0d0d0d;
   --color-gray-neutral-100: #edecea;
   --color-gray-neutral-200: #e8e7e5;
   --color-gray-neutral-300: #dbdad8;
@@ -19,18 +19,24 @@
 }
 
 .container {
-  margin: auto;
-  padding-inline: 1rem;
+  margin:auto;
+    width: 100%;
+    @media (width >= 40rem /* 640px */) {
+        max-width: 40rem /* 640px */;
+    }
+    @media (width >= 48rem /* 768px */) {
+        max-width: 44rem /* 768px */;
+    }
+    @media (width >= 64rem /* 1024px */) {
+        max-width: 60rem /* 1024px */;
+    }
+    @media (width >= 80rem /* 1280px */) {
+        max-width: 80rem /* 1280px */;
+    }
+    @media (width >= 112rem /* 1536px */) {
+        max-width: 112rem /* 1536px */;
+    }
 }
-
-.container-md {
-  width: 100%;
-  max-width: var(--breakpoint-md);
-}
-
-
-
-
 
 body {
   background: var(--background);

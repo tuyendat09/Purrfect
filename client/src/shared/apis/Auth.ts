@@ -1,45 +1,71 @@
 const DOMAIN_API = process.env.NEXT_PUBLIC_DOMAIN_API;
 
-import { ParamsRegister, ParamsVerifyOTP, RegisterResponse } from "../types/AuthAPI";
+import {
+  ParamsRegister,
+  ParamsVerifyOTP,
+  RegisterResponse,
+  ParamsLogin,
+} from "../types/AuthAPI";
+import { createRequest } from "../utils/httpRequestBuilder";
+
+export const login = async (data: ParamsLogin): Promise<RegisterResponse> => {
+  try {
+    const response = await createRequest(DOMAIN_API)
+      .setPath("/api/auth/login")
+      .setMethod("POST")
+      .setHeaders({
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      })
+      .setBody(data)
+      .send<RegisterResponse>();
+
+    return response;
+  } catch (error) {
+    console.error("❌ Login failed:", error);
+    throw error;
+  }
+};
 
 export const register = async (
   params: ParamsRegister
 ): Promise<RegisterResponse> => {
-  const response = await fetch(`${DOMAIN_API}/api/auth/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(params),
-  });
+  try {
+    const response = await createRequest(DOMAIN_API)
+      .setPath("/api/auth/register")
+      .setMethod("POST")
+      .setHeaders({
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      })
+      .setBody(params)
+      .send<RegisterResponse>();
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const errorMessage = errorData?.message || "Something wrong :(";
-    throw new Error(errorMessage);
+    return response;
+  } catch (error) {
+    console.error("❌ Login failed:", error);
+    throw error;
   }
-
-  return response.json();
 };
 
 export const verifyOTP = async (
   params: ParamsVerifyOTP
 ): Promise<RegisterResponse> => {
-  const response = await fetch(`${DOMAIN_API}/api/auth/verifyOTP`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(params),
-  });
+  try {
+    const response = await createRequest(DOMAIN_API)
+      .setPath("/api/auth/verifyOTP")
+      .setMethod("POST")
+      .setHeaders({
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      })
+      .setBody(params)
+      .send<RegisterResponse>();
+      
+    return response;
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const errorMessage = errorData?.message || "Something wrong :(";
-    throw new Error(errorMessage);
+  } catch (error) {
+    console.error("❌ Login failed:", error);
+    throw error;
   }
-
-  return response.json();
 };
