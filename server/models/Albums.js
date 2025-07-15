@@ -27,3 +27,5 @@ const albumsSchema = new Schema(
 
 albumSchema.index({ createdBy: 1 });
 albumSchema.index({ imageIds: 1 });
+
+module.exports = mongoose.model("Albums", albumsSchema, "albums");

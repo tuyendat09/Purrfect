@@ -7,6 +7,8 @@ const passport = require("passport");
 router.post("/register", authController.handleRegister);
 router.post("/login", authController.handleLogin);
 router.post("/verifyOTP", authController.handleVerifyOTP);
+router.post("/test", authController.testToken);
+
 // router.get("/test", checkRole(["admin", "user"]), authController.test);
 
 module.exports = router;

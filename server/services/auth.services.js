@@ -25,7 +25,7 @@ exports.createTempUser = async (newUserData, otp) => {
   });
 
   await tempUser.save();
-  await sendOtpEmail(email, otp);
+  sendOtpEmail(email, otp);
 };
 
 exports.updateTempUser = async (existingTempUser, newUserData, otp) => {
@@ -37,7 +37,7 @@ exports.updateTempUser = async (existingTempUser, newUserData, otp) => {
   existingTempUser.createdAt = new Date();
 
   await existingTempUser.save();
-  await sendOtpEmail(existingTempUser.email, otp);
+  sendOtpEmail(existingTempUser.email, otp);
 };
 
 exports.createOrUpdateTempUser = async (newUserData, otp) => {

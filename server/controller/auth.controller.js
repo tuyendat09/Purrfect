@@ -84,4 +84,17 @@ exports.handleLogin = asyncHandler(async (req, res) => {
   });
 });
 
+exports.testToken = async (req, res) => {
+  console.log(req.session);
+  console.log(req.session.id);
+
+  if (req.session.views) {
+    req.session.views++;
+  } else {
+    req.session.views = 1;
+  }
+
+  return res.status(200).json(req.session);
+};
+
 // A new verification code has been sent to your email

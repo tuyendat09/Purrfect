@@ -24,3 +24,5 @@ const elementSchema = new Schema(
 );
 
 elementSchema.index({ autoTags: 1 });
+
+module.exports = mongoose.model("Element", elementSchema, "elements");

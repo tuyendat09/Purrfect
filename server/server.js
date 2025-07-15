@@ -7,7 +7,7 @@ mongoose
   .connect(process.env.DATABASE)
   .then(() => console.log("Sucesses Connect Database 😭😭 "));
 
-mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
+mongoose.Promise = global.Promise;
 mongoose.connection.on("error", (err) => {
   console.error(`🚫 Error → : ${err.message}`);
 });
