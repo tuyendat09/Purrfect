@@ -13,9 +13,10 @@
   --color-gray-neutral-100: #edecea;
   --color-gray-neutral-200: #e8e7e5;
   --color-gray-neutral-300: #dbdad8;
-  --color-gray-neutral-400: #aaaaaa;
-  --color-gray-neutral-500: #727170;
-  --color-gray-neutral-600: #69696c;
+  --color-gray-neutral-400: #d1d0cd;
+  --color-gray-neutral-500: #aaaaaa;
+  --color-gray-neutral-600: #727170;
+  --color-gray-neutral-700: #69696c;
 }
 
 .container {

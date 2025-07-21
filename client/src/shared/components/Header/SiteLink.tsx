@@ -6,11 +6,12 @@ import Link from "next/link";
 import {
   DropMenu,
   DropMenuTrigger,
-  DropDown,
   DropMenuItem,
+  DropDown,
 } from "@/shared/components/DropMenu";
+
 import FlagElement from "../Icon/FlagIcon";
-import { ChevronDown } from "../Icon";
+import { ChevronDown, NewCluster, NewImage } from "../Icon";
 
 export default function SiteLink() {
   return (
@@ -22,10 +23,25 @@ export default function SiteLink() {
           </Button>
         </DropMenuTrigger>
 
-        <DropDown position="center">
-          <DropMenuItem>Profile</DropMenuItem>
-          <DropMenuItem>Settings</DropMenuItem>
-          <DropMenuItem className="text-red-500">Logout</DropMenuItem>
+        <DropDown className="px-2 py-4" position="center">
+          <DropMenuItem className="py-4 flex items-center gap-3">
+            <div className="rounded-full bg-neutral-400 p-2 ">
+              <NewCluster className="size-6" />
+            </div>
+            <div>
+              <h4 className="text-[14px] font-bold">New Cluster</h4>
+              <p className="text-[12px]">A collection of elements</p>
+            </div>
+          </DropMenuItem>
+          <DropMenuItem className="py-4 flex items-center gap-3">
+            <div className="rounded-full bg-gray-neutral-400 p-2 ">
+              <NewImage className="size-4" />
+            </div>
+            <div>
+              <h4 className="text-[14px] font-bold">New Element</h4>
+              <p className="text-[12px]">Create a new Image</p>
+            </div>
+          </DropMenuItem>
         </DropDown>
       </DropMenu>
 

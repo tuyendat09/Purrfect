@@ -12,7 +12,7 @@ export default function DropdownItem({
   return (
     <li
       onClick={onClick}
-      className={`px-4 py-2 hover:bg-gray-100 cursor-pointer ${className}`}
+      className={`px-2 py-2 hover:bg-gray-neutral-300 rounded-[20px] cursor-pointer ${className}`}
       role="menuitem"
     >
       {children}

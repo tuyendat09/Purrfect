@@ -17,7 +17,7 @@ const positionClasses: Record<
   right: "right-0",
 };
 
-export default function DropDown({
+export default function DropDownLazy({
   children,
   className,
   position = "right",
@@ -32,7 +32,7 @@ export default function DropDown({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -5 }}
           className={clsx(
-            "absolute right-0 mt-6 w-48 bg-gray-neutral-200 border-gray-neutral-300 border-[1px] rounded-xl shadow-xl z-50",
+            "absolute w-[260px] right-0 mt-5  bg-gray-neutral-200 border-gray-neutral-300 border-[1px] rounded-[20px] shadow-xl z-50",
             className,
             positionClasses[position]
           )}
