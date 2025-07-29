@@ -10,10 +10,25 @@ import {
   DropDown,
 } from "@/shared/components/DropMenu";
 
+const Modal = lazy(() => import("@/shared/components/Modal/Modal"));
+const ModalContent = lazy(
+  () => import("@/shared/components/Modal/ModalContent")
+);
+const ModalBody = lazy(() => import("@/shared/components/Modal/ModalBody"));
+const ModalFooter = lazy(() => import("@/shared/components/Modal/ModalFooter"));
+const ModalHeader = lazy(() => import("@/shared/components/Modal/ModalHeader"));
+
 import FlagElement from "../Icon/FlagIcon";
 import { ChevronDown, NewCluster, NewImage } from "../Icon";
+import { lazy, useState } from "react";
 
 export default function SiteLink() {
+  const [isOpenNewImageModal, setOpenNewImageModal] = useState<boolean>(false);
+
+  function handleToggleNewImageModal() {
+    setOpenNewImageModal((prevState) => !prevState);
+  }
+
   return (
     <div className="flex items-center gap-2">
       <DropMenu className="mr-4">
@@ -25,7 +40,7 @@ export default function SiteLink() {
 
         <DropDown className="px-2 py-4" position="center">
           <DropMenuItem className="py-4 flex items-center gap-3">
-            <div className="rounded-full bg-neutral-400 p-2 ">
+            <div className="rounded-full bg-neutral-300 p-2 ">
               <NewCluster className="size-6" />
             </div>
             <div>
@@ -33,7 +48,10 @@ export default function SiteLink() {
               <p className="text-[12px]">A collection of elements</p>
             </div>
           </DropMenuItem>
-          <DropMenuItem className="py-4 flex items-center gap-3">
+          <DropMenuItem
+            onClick={handleToggleNewImageModal}
+            className="py-4 flex items-center gap-3"
+          >
             <div className="rounded-full bg-gray-neutral-400 p-2 ">
               <NewImage className="size-4" />
             </div>
@@ -72,6 +90,28 @@ export default function SiteLink() {
           </div>
         </DropDown>
       </DropMenu>
+
+      {isOpenNewImageModal && (
+        <Modal
+          isOpen={isOpenNewImageModal}
+          onClose={handleToggleNewImageModal}
+          size="md"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader>Modal Title</ModalHeader>
+                <ModalBody>
+                  <p>Some content here</p>
+                </ModalBody>
+                <ModalFooter>
+                  <button onClick={onClose}>Close</button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      )}
     </div>
   );
 }
