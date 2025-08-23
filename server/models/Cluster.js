@@ -3,9 +3,9 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-const albumsSchema = new Schema(
+const clustersSchema = new Schema(
   {
-    albumName: {
+    clusterName: {
       type: String,
       required: true,
     },
@@ -13,7 +13,7 @@ const albumsSchema = new Schema(
       type: String,
       required: true,
     },
-    imageIds: [
+    elementIds: [
       {
         type: ObjectId,
         ref: "Element",
@@ -25,7 +25,7 @@ const albumsSchema = new Schema(
   }
 );
 
-albumSchema.index({ createdBy: 1 });
-albumSchema.index({ imageIds: 1 });
+clustersSchema.index({ createdBy: 1 });
+clustersSchema.index({ imageIds: 1 });
 
-module.exports = mongoose.model("Albums", albumsSchema, "albums");
+module.exports = mongoose.model("Clusters", clustersSchema, "clusters");

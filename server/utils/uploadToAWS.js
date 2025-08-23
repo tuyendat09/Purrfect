@@ -18,7 +18,7 @@ const s3 = new S3Client({
 async function resizeImage(fileBuffer) {
   try {
     const resizedImageBuffer = await sharp(fileBuffer)
-      .resize(1000, 1500) // Resize đến kích thước mong muốn
+      .resize({ width: 500, withoutEnlargement: true }) // Resize đến kích thước mong muốn
       .toBuffer();
     return resizedImageBuffer;
   } catch (error) {
@@ -30,22 +30,36 @@ async function resizeImage(fileBuffer) {
 const uploadFileToS3 = async (file) => {
   const resizedImageBuffer = await resizeImage(file.buffer);
 
-  const params = {
+  const originalKey = `${uuidv4()}-original-${file.originalname}`;
+  const previewKey = `${uuidv4()}-preview-${file.originalname}`;
+
+  const originalParams = {
     Bucket: process.env.S3_BUCKET_NAME,
-    Key: `${uuidv4()}-${file.originalname}`, // Tạo tên file duy nhất
+    Key: originalKey, // Tạo tên file duy nhất
     Body: file.buffer, // Buffer của file
     ContentType: file.mimetype, // MIME type
-    ACL: "public-read", // Quyền truy cập công khai
+  };
+
+  const previewParams = {
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: previewKey, // Tạo tên file duy nhất
+    Body: resizedImageBuffer, // Buffer của file
+    ContentType: file.mimetype, // MIME type
   };
 
   try {
-    // Sử dụng PutObjectCommand để upload file
-    const command = new PutObjectCommand(params);
-    await s3.send(command);
-    const fileUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${params.Key}`;
-    return fileUrl;
+    // Upload song song
+    const [originalResult, previewResult] = await Promise.all([
+      s3.send(new PutObjectCommand(originalParams)),
+      s3.send(new PutObjectCommand(previewParams)),
+    ]);
+
+    return {
+      originalUrl: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${originalKey}`,
+      previewUrl: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${previewKey}`,
+    };
   } catch (error) {
-    console.error("Lỗi khi upload file lên S3:", error);
+    console.error("Upload thất bại:", error);
     throw error;
   }
 };

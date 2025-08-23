@@ -45,8 +45,10 @@ exports.handleVerifyOTP = asyncHandler(async (req, res) => {
         message =
           "Your session has expired. Please start the registration again.";
         break;
+
       case "INVALID_OTP":
-        message = "Invalid OTP.";
+        message =
+          "Hmm, that OTP doesn’t seem right. Mind giving it another try?";
         break;
     }
     return res.status(400).json({ success: false, message });
@@ -75,6 +77,10 @@ exports.handleLogin = asyncHandler(async (req, res) => {
         message =
           "Hmm, we couldn’t log you in. Please double-check your email and password.";
         break;
+      case "EMPTY_DATA":
+        message =
+          "Almost there! Just fill in the missing bits and you're good to go. 😊";
+        break;
     }
     return res.status(400).json({ success: false, message });
   }
@@ -85,16 +91,9 @@ exports.handleLogin = asyncHandler(async (req, res) => {
 });
 
 exports.testToken = async (req, res) => {
-  console.log(req.session);
-  console.log(req.session.id);
+  const { user } = req;
 
-  if (req.session.views) {
-    req.session.views++;
-  } else {
-    req.session.views = 1;
-  }
-
-  return res.status(200).json(req.session);
+  return res.status(200).json(user);
 };
 
 // A new verification code has been sent to your email

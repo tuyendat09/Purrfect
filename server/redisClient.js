@@ -1,14 +1,13 @@
-// redisClient.js
-const Redis = require('ioredis');
+const Redis = require("ioredis");
 
-const redisClient = new Redis(); // mặc định localhost:6379
+const redisClient = new Redis();
 
-redisClient.on('connect', () => {
-  console.log('✅ ioredis connected');
+redisClient.on("connect", () => {
+  console.log("✅ ioredis connected");
 });
 
-redisClient.on('error', (err) => {
-  console.error('❌ ioredis connection error:', err);
+redisClient.on("error", (err) => {
+  console.error("❌ ioredis connection error:", err);
 });
 
 module.exports = redisClient;

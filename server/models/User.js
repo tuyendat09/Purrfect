@@ -29,7 +29,7 @@ const userSchema = new Schema(
 
     profilePicture: {
       type: String,
-      default: "default-user.png",
+      default: "default-user.jpg",
     },
 
     userRole: {

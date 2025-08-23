@@ -4,17 +4,18 @@ const TempUser = require("../models/TempUser");
 const { sendOtpEmail, generateOTP } = require("../utils/sendOTP");
 const { isValidEmail, isValidPassword } = require("../utils/verifyResigerData");
 const isDocumentExist = require("../utils/isDocumentExist");
-const tokenService = require("./tokenServices");
+const { generateToken } = require("../utils/generateToken");
+const verifyEmptyData = require("../utils/verifyEmptyData");
 
-exports.isUserExist = (email) => {
+const isUserExist = (email) => {
   return isDocumentExist(User, { email: email });
 };
 
-exports.isTempUserExist = (email) => {
+const isTempUserExist = (email) => {
   return isDocumentExist(TempUser, { email: email });
 };
 
-exports.createTempUser = async (newUserData, otp) => {
+const createTempUser = async (newUserData, otp) => {
   const { email, password } = newUserData;
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -25,10 +26,9 @@ exports.createTempUser = async (newUserData, otp) => {
   });
 
   await tempUser.save();
-  sendOtpEmail(email, otp);
 };
 
-exports.updateTempUser = async (existingTempUser, newUserData, otp) => {
+const updateTempUser = async (existingTempUser, newUserData, otp) => {
   const { password } = newUserData;
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -37,33 +37,45 @@ exports.updateTempUser = async (existingTempUser, newUserData, otp) => {
   existingTempUser.createdAt = new Date();
 
   await existingTempUser.save();
-  sendOtpEmail(existingTempUser.email, otp);
 };
 
-exports.createOrUpdateTempUser = async (newUserData, otp) => {
-  const existingTempUser = await TempUser.findOne({ email: newUserData.email });
+const createOrUpdateTempUser = async (newUserData, otp) => {
+  const existingTempUser = await isTempUserExist(newUserData.email);
 
   if (existingTempUser) {
-    return this.updateTempUser(existingTempUser, newUserData, otp);
+    return updateTempUser(existingTempUser, newUserData, otp);
   } else {
-    return this.createTempUser(newUserData, otp);
+    return createTempUser(newUserData, otp);
   }
 };
 
-exports.handleRegister = async (newUserData) => {
-  const { email, password } = newUserData;
+const validateRegisterInput = ({ email, password }) => {
   if (!isValidEmail(email)) return { success: false, code: "INVALID_EMAIL" };
   if (!isValidPassword(password))
     return { success: false, code: "INVALID_PASSWORD" };
+  return { success: true };
+};
 
-  const userExists = await this.isUserExist(email);
-
-  if (userExists) {
+const checkDuplicatedUser = async (email) => {
+  if (await isUserExist(email)) {
     return { success: false, code: "USER_EXIST" };
   }
 
+  return { success: true };
+};
+
+exports.handleRegister = async (newUserData) => {
+  const { email } = newUserData;
+
+  const validation = validateRegisterInput(newUserData);
+  if (!validation.success) return validation;
+
+  const userDuplicated = await checkDuplicatedUser(email);
+  if (!userDuplicated.success) return userDuplicated;
+
   const OTP = await generateOTP();
-  await this.createOrUpdateTempUser(newUserData, OTP);
+  await createOrUpdateTempUser(newUserData, OTP);
+  await sendOtpEmail(email, OTP);
 
   return { success: true, code: "REGISTER_COMPLETE" };
 };
@@ -85,9 +97,9 @@ async function createUserFromTemp(tempUser) {
   return newUser;
 }
 
-async function deleteTempUser(email) {
+const deleteTempUser = async (email) => {
   await TempUser.deleteOne({ email: email });
-}
+};
 
 exports.handleVerifyOTP = async (verifyData) => {
   const { email, OTP } = verifyData;
@@ -107,42 +119,45 @@ exports.handleVerifyOTP = async (verifyData) => {
   return { success: true, user: newUser };
 };
 
-exports.handleVerifyPassword = async (plainPassword, hashedPassword) => {
-  return await bcrypt.compare(plainPassword, hashedPassword);
-};
+const checkCredentials = async (loginData) => {
+  const verifyCredentialsData = verifyEmptyData(loginData);
 
-exports.getUserByEmail = async (email) => {
-  return await User.findOne({ email });
-};
+  if (!verifyCredentialsData.success) return verifyCredentialsData;
 
-exports.handleLogin = async (loginData, req) => {
   const { email, password } = loginData;
 
-  const user = await this.getUserByEmail(email);
-
+  const user = await User.findOne({ email });
   if (!user) {
     return { success: false, code: "INVALID_CREDENTIALS" };
   }
 
-  const isMatch = await this.handleVerifyPassword(password, user.password);
-
+  const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     return { success: false, code: "INVALID_CREDENTIALS" };
   }
 
-  // TODO: generate token, return success
-  const token = await tokenService.generateToken(user);
-  req.session.token = token;
+  return { success: true, user };
+};
 
-  const publicUser = {
+const getPublicUser = (user) => {
+  return {
     id: user._id,
     email: user.email,
     displayName: user.displayName,
     profilePicture: user.profilePicture,
   };
+};
+
+exports.handleLogin = async (loginData, req) => {
+  const { success, code, user } = await checkCredentials(loginData);
+
+  if (!success) return { success: false, code };
+
+  const token = generateToken(user);
+  req.session.token = token;
 
   return {
     success: true,
-    user: publicUser,
+    user: getPublicUser(user),
   };
 };

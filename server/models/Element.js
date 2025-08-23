@@ -10,6 +10,13 @@ const elementSchema = new Schema(
       required: true,
     },
 
+    previewImageUrl: { type: String, required: true },
+
+    uploadBy: {
+      type: ObjectId,
+      required: true,
+    },
+
     autoTags: [
       {
         type: String,

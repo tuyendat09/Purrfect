@@ -29,22 +29,27 @@ app.use(
       sameSite: "lax",
       secure: false,
     },
+    rolling: true,
   })
 );
 
 // === Router Config ===
 const authRouter = require("./routes/auth.routes");
+const elementRouter = require("./routes/element.routes");
+const clusterRouter = require("./routes/cluster.routes");
+const checkRole = require("./middleware/checkRole");
 
 // === Security Middleware ===
 app.use(helmet()); // Thêm các header bảo mật
 
 // Chống brute-force: giới hạn số request mỗi IP
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 phút
-  max: 100, // giới hạn 100 request mỗi IP
-  message: "Too many requests from this IP, please try again later.",
-});
-app.use(limiter);
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 phút
+//   max: 100, // giới hạn 100 request mỗi IP
+//   message: "Too many requests from this IP, please try again later.",
+// });
+
+// app.use(limiter);
 
 // Chống NoSQL injection
 app.use(mongoSanitize());
@@ -68,6 +73,13 @@ app.use(jsonParser);
 
 // === Route ===
 app.use("/api/auth", authRouter);
+
+// Need Token
+app.use(checkRole([]));
+app.use("/api/element", elementRouter);
+app.use("/api/cluster", clusterRouter);
+
+// Only Admin Route
 
 // === Error Handler ===
 app.use(errorHandler);
