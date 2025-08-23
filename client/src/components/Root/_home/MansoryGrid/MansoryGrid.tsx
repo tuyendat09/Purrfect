@@ -1,56 +1,48 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Masonry } from "react-plock";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { handleGetElement } from "@/shared/apis/Element";
+import { GetELementQueryResponse } from "@/shared/types/ElementAPI";
+import { useRef, useEffect } from "react";
+import { useInView } from "framer-motion";
+import { sleep } from "@/shared/utils/sleep";
+import MansoryItem from "./MansoryItem";
+import { lazy } from "react";
 
-interface MasonryImage {
-  id: string;
-  src: string;
-  width: number;
-  height: number;
-}
-
-// Giả API
-const fetchImages = async ({ pageParam = 1 }): Promise<MasonryImage[]> => {
-  await new Promise((r) => setTimeout(r, 1000));
-
-  return Array.from({ length: 10 }).map((_, i) => {
-    const width = 250;
-    // Chiều cao random từ 200 tới 700 để khác biệt rõ
-    const height = 200 + Math.floor(Math.random() * 300);
-
-    return {
-      id: `img-${pageParam}-${i}`,
-      src: `https://picsum.photos/${width}/${height}?random=${
-        pageParam * 10 + i
-      }`,
-      width,
-      height,
-    };
-  });
-};
+const DotLottieReact = lazy(() =>
+  import("@lottiefiles/dotlottie-react").then((mod) => ({
+    default: mod.DotLottieReact,
+  }))
+);
 
 export default function MasonryInfiniteGallery() {
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["masonryImages"],
-    queryFn: fetchImages,
-    getNextPageParam: (lastPage, pages) => {
-      if (pages.length >= 5) return undefined; // max 5 pages
-      return pages.length + 1;
-    },
-    initialPageParam: 1,
-  });
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery<GetELementQueryResponse, Error>({
+      queryKey: ["masonryImages"],
+      queryFn: async ({ pageParam = 1 as any }) => {
+        await sleep(1000);
+        return handleGetElement({ page: pageParam, limit: 5 });
+      },
+      getNextPageParam: (lastPage, pages) =>
+        lastPage.hasNextPage ? pages.length + 1 : undefined,
+      initialPageParam: 1,
+    });
 
-  const allImages = data?.pages.flat() ?? [];
+  const allImages = data?.pages.flatMap((page) => page.element) ?? [];
+
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(loadMoreRef, { margin: "0px 0px 200px 0px" });
+
+  useEffect(() => {
+    if (isInView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [isInView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <InfiniteScroll
-      dataLength={allImages.length}
-      next={fetchNextPage}
-      hasMore={!!hasNextPage}
-      loader={"Loading..."}
-    >
+    <div>
       <Masonry
         items={allImages}
         config={{
@@ -58,14 +50,20 @@ export default function MasonryInfiniteGallery() {
           gap: [24, 12, 60],
           media: [640, 768, 1024],
         }}
-        render={(item, idx) => (
-          <img
-            key={idx}
-            src={item.src}
-            style={{ width: "100%", height: "auto" }}
-          />
-        )}
+        render={(item) => <MansoryItem Element={item} />}
       />
-    </InfiniteScroll>
+
+      <div ref={loadMoreRef} style={{ height: 1 }} />
+
+      {isLoading && (
+        <DotLottieReact
+          className=" -translate-y-1/2 -translate-x-1/2 h-10 left-1/2 fixed top-1/2 translate"
+          src="https://lottie.host/211fb592-99fb-48c3-83ce-5938a5692053/qeSfsN5Gb5.lottie"
+          loop
+          autoplay
+        />
+      )}
+      {isFetchingNextPage && <p>Loading...</p>}
+    </div>
   );
 }

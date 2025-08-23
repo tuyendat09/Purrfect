@@ -1,6 +1,7 @@
 export interface PublicUser {
-    id: string,
-    email: string,
-    displayName: string,
-    profilePicture: string,
+  id: string;
+  email: string;
+  displayName: string;
+  profilePicture: string;
+  role: string;
 }

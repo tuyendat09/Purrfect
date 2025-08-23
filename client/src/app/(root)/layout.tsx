@@ -4,6 +4,7 @@ import StoreProvider from "../StoreProvider";
 import "../globals.css";
 import Header from "@/shared/components/Header/Header";
 import Container from "@/shared/components/Container";
+import { Toaster } from "react-hot-toast";
 
 const dmSANS = DM_Sans({
   variable: "--font-dm-sans",
@@ -35,8 +36,23 @@ export default function RootLayout({
     >
       <body>
         <Container>
-          <Header />
-          <StoreProvider>{children}</StoreProvider>
+          <StoreProvider>
+            <Toaster
+              position="bottom-center" // Đặt toaster ở giữa dưới
+              toastOptions={{
+                className: `
+            !bg-black 
+            !text-white 
+            !rounded-full 
+            !text-[14px]
+            !max-w-[800px]
+       `,
+              }}
+            />
+            <Header />
+
+            {children}
+          </StoreProvider>
         </Container>
       </body>
     </html>

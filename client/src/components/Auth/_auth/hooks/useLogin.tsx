@@ -1,8 +1,8 @@
-import { login } from "@/shared/apis/Auth";
 import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { ParamsLogin } from "@/shared/types/AuthAPI";
 
 interface errorsValues {
   email: string;
@@ -15,7 +15,10 @@ export default function useLogin() {
   const router = useRouter();
 
   const mutation = useMutation({
-    mutationFn: login,
+    mutationFn: async (values: ParamsLogin) => {
+      const { login } = await import("@/shared/apis/Auth");
+      return login(values);
+    },
     onError(error) {
       toast.error(error.message);
     },

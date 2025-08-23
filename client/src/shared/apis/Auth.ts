@@ -1,14 +1,17 @@
 const DOMAIN_API = process.env.NEXT_PUBLIC_DOMAIN_API;
 
+import { APIResponseType } from "./../types/APIResponseType";
 import {
   ParamsRegister,
   ParamsVerifyOTP,
-  RegisterResponse,
   ParamsLogin,
+  LoginResponse,
 } from "../types/AuthAPI";
-import { createRequest } from "../utils/httpRequestBuilder";
 
-export const login = async (data: ParamsLogin): Promise<RegisterResponse> => {
+import { createRequest } from "../utils/httpRequestBuilder";
+import { PublicUser } from "../types/User";
+
+export const login = async (data: ParamsLogin): Promise<LoginResponse> => {
   try {
     const response = await createRequest(DOMAIN_API)
       .setPath("/api/auth/login")
@@ -18,7 +21,7 @@ export const login = async (data: ParamsLogin): Promise<RegisterResponse> => {
         Accept: "application/json",
       })
       .setBody(data)
-      .send<RegisterResponse>();
+      .send<LoginResponse>();
 
     return response;
   } catch (error) {
@@ -29,7 +32,7 @@ export const login = async (data: ParamsLogin): Promise<RegisterResponse> => {
 
 export const register = async (
   params: ParamsRegister
-): Promise<RegisterResponse> => {
+): Promise<APIResponseType> => {
   try {
     const response = await createRequest(DOMAIN_API)
       .setPath("/api/auth/register")
@@ -39,7 +42,7 @@ export const register = async (
         Accept: "application/json",
       })
       .setBody(params)
-      .send<RegisterResponse>();
+      .send<APIResponseType>();
 
     return response;
   } catch (error) {
@@ -50,7 +53,7 @@ export const register = async (
 
 export const verifyOTP = async (
   params: ParamsVerifyOTP
-): Promise<RegisterResponse> => {
+): Promise<APIResponseType> => {
   try {
     const response = await createRequest(DOMAIN_API)
       .setPath("/api/auth/verifyOTP")
@@ -60,10 +63,28 @@ export const verifyOTP = async (
         Accept: "application/json",
       })
       .setBody(params)
-      .send<RegisterResponse>();
-      
-    return response;
+      .send<APIResponseType>();
 
+    return response;
+  } catch (error) {
+    console.error("❌ Login failed:", error);
+    throw error;
+  }
+};
+
+export const getUser = async (): Promise<PublicUser> => {
+  try {
+    const response = await createRequest(DOMAIN_API)
+      .setPath("/api/auth/")
+      .setMethod("GET")
+      .setHeaders({
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      })
+      .setBody(null)
+      .send<PublicUser>();
+
+    return response;
   } catch (error) {
     console.error("❌ Login failed:", error);
     throw error;

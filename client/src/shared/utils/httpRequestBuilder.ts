@@ -2,14 +2,19 @@
 type Method = "GET" | "POST" | "PUT" | "DELETE";
 type Headers = Record<string, string>;
 
-export const createRequest = <B = any>(baseUrl = "") => {
+export const createRequest = <
+  B = any, // body
+  Q extends Record<string, any> = Record<string, any> // query
+>(
+  baseUrl = ""
+) => {
   let method: Method = "GET";
   let headers: Headers = {};
   let body: B | null = null;
   let path = "";
-  let query: Record<string, string | number> = {};
+  let query: Q = {} as Q;
 
-  const builder = {
+  const builder = { 
     setMethod(m: Method) {
       method = m;
       return builder;
@@ -26,7 +31,7 @@ export const createRequest = <B = any>(baseUrl = "") => {
       body = b;
       return builder;
     },
-    setQuery(q: Record<string, string | number>) {
+    setQuery(q: Q) {
       query = { ...query, ...q };
       return builder;
     },
@@ -36,11 +41,21 @@ export const createRequest = <B = any>(baseUrl = "") => {
         url.search = new URLSearchParams(query as any).toString();
       }
 
+      const isFormData =
+        typeof FormData !== "undefined" && body instanceof FormData;
+
       const response = await fetch(url.toString(), {
         method,
-        headers,
+        headers: isFormData
+          ? headers
+          : { "Content-Type": "application/json", ...headers },
         credentials: "include",
-        body: method !== "GET" && body ? JSON.stringify(body) : undefined,
+        body:
+          method !== "GET" && body
+            ? isFormData
+              ? body
+              : JSON.stringify(body)
+            : undefined,
       });
 
       if (!response.ok) {

@@ -5,11 +5,6 @@ export interface ParamsRegister {
   password: string;
 }
 
-export interface RegisterResponse {
-  success: boolean;
-  message: string;
-}
-
 export interface ParamsVerifyOTP {
   email: string;
   OTP: number;

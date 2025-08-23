@@ -4,7 +4,7 @@ import SiteLink from "./SiteLink";
 
 export default function Header() {
   return (
-    <header className="bg-[#f5f4f2] sticky top-0 py-4 flex justify-between">
+    <header className="bg-[#f5f4f2] sticky top-0 py-4 flex justify-between z-[9999]">
       <NavLink />
       <SearchBar />
       <SiteLink />

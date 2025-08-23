@@ -1,18 +1,7 @@
-import { ModalContext } from "./ModalContext";
+interface ModalContentProps {
+  children: React.ReactNode;
+}
 
-export default function ModalContent({
-  children,
-}: {
-  children: (onClose: () => void) => React.ReactNode;
-}) {
-  console.log("modal content render");
-  return (
-    <ModalContext.Provider
-      value={{
-        onClose: () => window.dispatchEvent(new CustomEvent("modal-close")),
-      }}
-    >
-      {children(() => window.dispatchEvent(new CustomEvent("modal-close")))}
-    </ModalContext.Provider>
-  );
+export default function ModalContent({ children }: ModalContentProps) {
+  return <div>{children}</div>;
 }
