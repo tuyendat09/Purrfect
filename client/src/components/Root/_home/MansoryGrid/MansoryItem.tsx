@@ -4,6 +4,8 @@ import Image from "next/image";
 import useLikeElement from "./hook/useLikeElement";
 import { memo, useEffect, useState } from "react";
 
+import Link from "next/link";
+
 interface MansoryItemProps {
   Element: Element;
 }
@@ -27,7 +29,7 @@ function MasonryButton({ isLiked, elementId, setIsLiked }: MasonryButtonProps) {
   return (
     <Button
       onClick={() => handleLikeElement(elementId)}
-      className="group-hover:opacity-100 opacity-0 transition duration-100 absolute top-4 right-4 z-10 text-red-500"
+      className="group-hover:opacity-100 opacity-0 transition duration-100 absolute top-4 right-4 z-10 "
     >
       {isLiked ? "Liked" : "Like"}
     </Button>
@@ -37,8 +39,6 @@ function MasonryButton({ isLiked, elementId, setIsLiked }: MasonryButtonProps) {
 const MansoryItem = memo(function MansoryItem({ Element }: MansoryItemProps) {
   const { isLiked, _id } = Element;
 
-  console.log("render");
-
   const [isLikedState, setIsLiked] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
@@ -46,23 +46,25 @@ const MansoryItem = memo(function MansoryItem({ Element }: MansoryItemProps) {
   }, [isLiked]);
 
   return (
-    <div className="relative group">
-      <Image
-        priority
-        alt="Image"
-        width={500}
-        height={500}
-        key={_id}
-        src={Element.previewImageUrl}
-        style={{ width: "100%", height: "auto" }}
-      />
-      <MasonryButton
-        isLiked={isLikedState}
-        setIsLiked={setIsLiked}
-        elementId={_id}
-      />
-      <div className="absolute w-full h-full top-0 left-0 opacity-0 group-hover:opacity-50 cursor-zoom-in transition duration-150 bg-black " />
-    </div>
+    <Link href={`/element/${_id}`}>
+      <div className="relative group">
+        <Image
+          priority
+          alt="Image"
+          width={500}
+          height={500}
+          key={_id}
+          src={Element.previewImageUrl}
+          style={{ width: "100%", height: "auto" }}
+        />
+        <MasonryButton
+          isLiked={isLikedState}
+          setIsLiked={setIsLiked}
+          elementId={_id}
+        />
+        <div className="absolute w-full h-full top-0 left-0 opacity-0 group-hover:opacity-50 cursor-zoom-in transition duration-150 bg-black " />
+      </div>
+    </Link>
   );
 });
 

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import StoreProvider from "../StoreProvider";
 import "../globals.css";
-import Header from "@/shared/components/Header/Header";
 import Container from "@/shared/components/Container";
 import { Toaster } from "react-hot-toast";
 
@@ -49,7 +48,6 @@ export default function RootLayout({
        `,
               }}
             />
-            <Header />
 
             {children}
           </StoreProvider>

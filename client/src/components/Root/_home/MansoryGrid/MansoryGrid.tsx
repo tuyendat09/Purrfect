@@ -1,15 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Masonry } from "react-plock";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { handleGetElement } from "@/shared/apis/Element";
-import { GetELementQueryResponse } from "@/shared/types/ElementAPI";
-import { useRef, useEffect } from "react";
-import { useInView } from "framer-motion";
-import { sleep } from "@/shared/utils/sleep";
 import MansoryItem from "./MansoryItem";
 import { lazy } from "react";
+import { Masonry } from "react-plock";
+import { useInfiniteElements } from "./hook/useInfiniteElements";
 
 const DotLottieReact = lazy(() =>
   import("@lottiefiles/dotlottie-react").then((mod) => ({
@@ -18,28 +12,8 @@ const DotLottieReact = lazy(() =>
 );
 
 export default function MasonryInfiniteGallery() {
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery<GetELementQueryResponse, Error>({
-      queryKey: ["masonryImages"],
-      queryFn: async ({ pageParam = 1 as any }) => {
-        await sleep(1000);
-        return handleGetElement({ page: pageParam, limit: 5 });
-      },
-      getNextPageParam: (lastPage, pages) =>
-        lastPage.hasNextPage ? pages.length + 1 : undefined,
-      initialPageParam: 1,
-    });
-
-  const allImages = data?.pages.flatMap((page) => page.element) ?? [];
-
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(loadMoreRef, { margin: "0px 0px 200px 0px" });
-
-  useEffect(() => {
-    if (isInView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [isInView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  const { allImages, loadMoreRef, isLoading, isFetchingNextPage } =
+    useInfiniteElements();
 
   return (
     <div>

@@ -6,3 +6,4 @@ export { default as FlagIcon } from "./FlagIcon";
 export { default as ChevronDown } from "./ChevronDown";
 export { default as NewCluster } from "./NewCluster";
 export { default as NewImage } from "./NewImage";
+export { default as ThreeDots } from "./ThreeDots";
