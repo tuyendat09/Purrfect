@@ -15,19 +15,22 @@ import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import { clsx } from "clsx";
 import { useGSAP } from "@gsap/react";
+import MasonryInfiniteGallery from "../_home/MansoryGrid/MansoryGrid";
 
 export default function Element({ id }: { id: string }) {
   const { element } = useElementQuery(id);
   const imageUrl: string | StaticImport = element?.imageUrl ?? "/default.jpg";
+  const elementTags: string[] | undefined = element?.autoTags;
   const formattedDate = formatDateToCustomString(element?.createdAt as any);
   const elementDetailRef = useRef<HTMLDivElement>(null);
-  const relatedELementRef = useRef<HTMLDivElement>(null);
 
   const endOfCommentsRef = useRef(null);
 
   const isInView = useInView(endOfCommentsRef, {
     margin: "0px 0px -100% 0px",
   });
+
+  console.log(elementTags);
 
   const [isScrollable, setIsScrollable] = useState(true);
 
@@ -58,7 +61,13 @@ export default function Element({ id }: { id: string }) {
           className="  flex justify-between h-screen "
         >
           <div className="flex justify-center items-center w-full">
-            <Image height={500} width={500} src={imageUrl} alt="" />
+            <Image
+              className=" h-3/4 object-contain"
+              height={500}
+              width={500}
+              src={imageUrl}
+              alt=""
+            />
           </div>
           <div className="w-1/4 h-full flex items-center">
             <div className="w-full h-[95%] bg-gray-neutral-200 rounded-3xl mr-4 p-4 flex flex-col">
@@ -111,16 +120,12 @@ export default function Element({ id }: { id: string }) {
           </div>
         </div>
         {/* Related Images */}
-        <div ref={relatedELementRef} className="mt-10 px-10 pb-10">
-          <h2 className="text-xl font-semibold mb-4">Related Images</h2>
-          <div className="grid grid-cols-4 gap-4">
-            {Array.from({ length: 40 }).map((_, idx) => (
-              <div
-                key={idx}
-                className="w-full h-40 bg-gray-300 rounded-xl"
-              ></div>
-            ))}
-          </div>
+        <div className="mt-10 px-10 pb-10">
+          {element && (
+            <MasonryInfiniteGallery
+              query={{ tag: JSON.stringify(elementTags), exceptId: id }}
+            />
+          )}
         </div>
       </div>
     </div>

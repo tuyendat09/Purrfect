@@ -1,5 +1,6 @@
 export interface GetElementQuery {
   id?: string;
+  exceptId?: string;
   page?: number | undefined;
   limit?: number;
   tag?: string;
