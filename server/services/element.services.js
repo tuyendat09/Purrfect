@@ -34,6 +34,7 @@ exports.handleCreateNewElement = async (uploadData) => {
   const userId = user.id;
 
   const { embedding, tags } = await processEmbedding(file);
+  console.log(tags);
   const { originalUrl, previewUrl } = await handleUpload(file);
 
   const newElementData = { originalUrl, previewUrl, userId, embedding, tags };
@@ -44,13 +45,21 @@ exports.handleCreateNewElement = async (uploadData) => {
 };
 
 function prepareQuery(params = {}) {
-  const { tag, lastest, oldest, popular } = params;
-
+  const { tag, lastest, oldest, popular, id, exceptId } = params;
   const filter = {};
   const sort = {};
 
   if (tag) {
-    filter.tag = new RegExp(tag, "i");
+    const jsonParseTags = JSON.parse(tag);
+    filter.autoTags = { $in: jsonParseTags };
+  }
+
+  if (id) {
+    filter._id = id;
+  }
+
+  if (exceptId) {
+    filter._id = { ...filter._id, $ne: exceptId };
   }
 
   if (lastest) {
@@ -94,11 +103,11 @@ async function clearUserElementCache(userId) {
 
 exports.handleQueryElement = async (queryData) => {
   const { query, userId } = queryData;
-
   const { filter, sort } = prepareQuery(query);
   const { skip, limit, currentPage } = handlePaginateElement(query);
 
-  const useCache = currentPage <= 10;
+  // Không dùng cache nếu có query.id
+  const useCache = currentPage <= 10 && !query.id;
   const cacheKey =
     getCacheKey(filter, sort, currentPage, limit) + `:user:${userId}`;
 
@@ -110,10 +119,11 @@ exports.handleQueryElement = async (queryData) => {
     }
   }
 
+  // Lấy dữ liệu từ DB
   const [elements, total, likedDocs] = await Promise.all([
     queryElement({ filter, sort, skip, limit }),
     Element.countDocuments(filter),
-    ElementLike.find({ userId: userId }).select("elementId"),
+    ElementLike.find({ userId }).select("elementId"),
   ]);
 
   const likedIds = new Set(likedDocs.map((d) => d.elementId.toString()));
@@ -134,32 +144,28 @@ exports.handleQueryElement = async (queryData) => {
     hasNextPage,
   };
 
-  // 4️⃣ Lưu cache
+  // Lưu cache chỉ nếu dùng
   if (useCache) {
-    await redis.set(cacheKey, JSON.stringify(result), "EX", 300); // TTL 5 phút
+    await redis.set(cacheKey, JSON.stringify(result), "EX", 300);
     console.log("📌 Data cached in Redis");
   }
 
   return result;
 };
 
-// --- 1. Check xem user đã like chưa ---
 async function handleCheckDuplicated({ userId, elementId }) {
   return await ElementLike.findOne({ userId, elementId });
 }
 
-// --- 2. Xoá like ---
 async function handleDeleteLikeElement({ userId, elementId }) {
   return await ElementLike.findOneAndDelete({ userId, elementId });
 }
 
-// --- 3. Tạo like ---
 async function handleCreateLikeElement({ userId, elementId }) {
   const like = new ElementLike({ userId, elementId });
   return await like.save();
 }
 
-// --- 4. Toggle like/unlike ---
 exports.handleLikeElement = async (likeElementData) => {
   const duplicated = await handleCheckDuplicated(likeElementData);
 

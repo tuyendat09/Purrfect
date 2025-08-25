@@ -43,13 +43,13 @@ const checkRole = require("./middleware/checkRole");
 app.use(helmet()); // Thêm các header bảo mật
 
 // Chống brute-force: giới hạn số request mỗi IP
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 phút
-//   max: 100, // giới hạn 100 request mỗi IP
-//   message: "Too many requests from this IP, please try again later.",
-// });
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 15 phút
+  max: 100, // giới hạn 100 request mỗi IP
+  message: "Too many requests from this IP, please try again later.",
+});
 
-// app.use(limiter);
+app.use(limiter);
 
 // Chống NoSQL injection
 app.use(mongoSanitize());
