@@ -19,6 +19,9 @@ export default function useLogin() {
       const { login } = await import("@/shared/apis/Auth");
       return login(values);
     },
+    onMutate: () => {
+      toast.loading("Login");
+    },
     onError(error) {
       toast.error(error.message);
     },
