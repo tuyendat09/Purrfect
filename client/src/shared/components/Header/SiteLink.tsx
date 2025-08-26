@@ -16,9 +16,10 @@ import FlagElement from "../Icon/FlagIcon";
 import { ChevronDown, NewCluster, NewImage } from "../Icon";
 import { lazy, useRef, useState } from "react";
 import NormalInput from "../Input/NormalInput";
-import { useQuery } from "@tanstack/react-query";
-import { getUser } from "@/shared/apis/Auth";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getUser, logout } from "@/shared/apis/Auth";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Modal = lazy(() => import("@/shared/components/Modal/Modal"));
 const ModalContent = lazy(
@@ -51,7 +52,7 @@ function UserProfilePicture({
 export default function SiteLink() {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const router = useRouter();
   function handleToggleModal(): void {
     setIsOpenModal((prevState) => !prevState);
   }
@@ -68,6 +69,15 @@ export default function SiteLink() {
     queryFn: getUser,
     staleTime: 1000 * 60 * 5,
   });
+
+  const mutation = useMutation({
+    mutationFn: logout,
+  });
+
+  function handleLogout() {
+    mutation.mutateAsync();
+    router.push("/auth");
+  }
 
   return (
     <div className="flex items-center gap-2">
@@ -139,10 +149,15 @@ export default function SiteLink() {
         </DropMenuTrigger>
 
         <DropDown className="p-2">
-          <div className="bg-red-500">
+          <div className="">
             <DropMenuItem>Profile</DropMenuItem>
             <DropMenuItem>Settings</DropMenuItem>
-            <DropMenuItem className="text-red-500">Logout</DropMenuItem>
+            <DropMenuItem
+              onClick={() => handleLogout()}
+              className="text-red-500"
+            >
+              Logout
+            </DropMenuItem>
           </div>
         </DropDown>
       </DropMenu>

@@ -10,6 +10,7 @@ import {
 
 import { createRequest } from "../utils/httpRequestBuilder";
 import { PublicUser } from "../types/User";
+import { withAuthRetry } from "../utils/withAuthRetry";
 
 export const login = async (data: ParamsLogin): Promise<LoginResponse> => {
   try {
@@ -73,8 +74,8 @@ export const verifyOTP = async (
 };
 
 export const getUser = async (): Promise<PublicUser> => {
-  try {
-    const response = await createRequest(DOMAIN_API)
+  return withAuthRetry(() =>
+    createRequest(DOMAIN_API)
       .setPath("/api/auth/")
       .setMethod("GET")
       .setHeaders({
@@ -82,7 +83,40 @@ export const getUser = async (): Promise<PublicUser> => {
         Accept: "application/json",
       })
       .setBody(null)
-      .send<PublicUser>();
+      .send<PublicUser>()
+  );
+};
+
+export const refreshToken = async (): Promise<APIResponseType> => {
+  try {
+    const response = await createRequest(DOMAIN_API)
+      .setPath("/api/auth/refresh-token")
+      .setMethod("POST")
+      .setHeaders({
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      })
+      .setBody(null)
+      .send<APIResponseType>();
+
+    return response;
+  } catch (error) {
+    console.error("❌ Login failed:", error);
+    throw error;
+  }
+};
+
+export const logout = async (): Promise<APIResponseType> => {
+  try {
+    const response = await createRequest(DOMAIN_API)
+      .setPath("/api/auth/logout")
+      .setMethod("POST")
+      .setHeaders({
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      })
+      .setBody(null)
+      .send<APIResponseType>();
 
     return response;
   } catch (error) {

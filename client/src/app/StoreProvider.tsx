@@ -7,6 +7,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
+import { Toaster } from "react-hot-toast";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -50,6 +51,18 @@ export default function StoreProvider({ children }: Props) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Toaster
+        position="bottom-center" // Đặt toaster ở giữa dưới
+        toastOptions={{
+          className: `
+            !bg-black 
+            !text-white 
+            !rounded-full 
+            !text-[14px]
+            !max-w-[800px]
+       `,
+        }}
+      />
       {shouldRenderHeader && <Header />}
       {children}
     </QueryClientProvider>

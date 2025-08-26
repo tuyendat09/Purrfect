@@ -5,6 +5,7 @@ import {
 } from "./../types/ElementAPI";
 import { APIResponseType } from "./../types/APIResponseType";
 import { createRequest } from "../utils/httpRequestBuilder";
+import { withAuthRetry } from "../utils/withAuthRetry";
 const DOMAIN_API = process.env.NEXT_PUBLIC_DOMAIN_API;
 
 export const uploadElement = async (
@@ -27,18 +28,13 @@ export const uploadElement = async (
 export const handleGetElement = async (
   params: GetElementQuery
 ): Promise<GetELementQueryResponse> => {
-  try {
-    const response = await createRequest<undefined, GetElementQuery>(DOMAIN_API)
+  return withAuthRetry(() =>
+    createRequest<undefined, GetElementQuery>(DOMAIN_API)
       .setPath("/api/element")
       .setMethod("GET")
       .setQuery(params)
-      .send<GetELementQueryResponse>();
-
-    return response;
-  } catch (error) {
-    console.error("Fetch failed:", error);
-    throw error;
-  }
+      .send<GetELementQueryResponse>()
+  );
 };
 
 export const handleLikeElement = async (

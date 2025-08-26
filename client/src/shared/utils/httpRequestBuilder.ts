@@ -14,7 +14,7 @@ export const createRequest = <
   let path = "";
   let query: Q = {} as Q;
 
-  const builder = { 
+  const builder = {
     setMethod(m: Method) {
       method = m;
       return builder;
@@ -58,13 +58,21 @@ export const createRequest = <
             : undefined,
       });
 
+      const contentType = response.headers.get("Content-Type");
+      const responseData = contentType?.includes("application/json")
+        ? await response.json().catch(() => ({}))
+        : {};
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData?.message || "Something wrong :(";
-        throw new Error(errorMessage);
+        const error = new Error(
+          responseData?.message || "Something went wrong"
+        );
+        (error as any).status = response.status;
+        (error as any).response = responseData;
+        throw error;
       }
 
-      return response.json() as Promise<R>;
+      return responseData as R;
     },
   };
 

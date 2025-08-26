@@ -46,25 +46,26 @@ const MansoryItem = memo(function MansoryItem({ Element }: MansoryItemProps) {
   }, [isLiked]);
 
   return (
-    <Link href={`/element/${_id}`}>
-      <div className="relative group">
-        <Image
-          priority
-          alt="Image"
-          width={500}
-          height={500}
-          key={_id}
-          src={Element.previewImageUrl}
-          style={{ width: "100%", height: "auto" }}
-        />
-        <MasonryButton
-          isLiked={isLikedState}
-          setIsLiked={setIsLiked}
-          elementId={_id}
-        />
-        <div className="absolute w-full h-full top-0 left-0 opacity-0 group-hover:opacity-50 cursor-zoom-in transition duration-150 bg-black " />
-      </div>
-    </Link>
+    <div className="relative group">
+      <Image
+        priority
+        alt="Image"
+        width={500}
+        height={500}
+        key={_id}
+        src={Element.previewImageUrl}
+        style={{ width: "100%", height: "auto" }}
+      />
+      <MasonryButton
+        isLiked={isLikedState}
+        setIsLiked={setIsLiked}
+        elementId={_id}
+      />
+      <Link
+        href={`/element/${_id}`}
+        className="absolute w-full h-full top-0 left-0  opacity-0 group-hover:opacity-50 cursor-zoom-in transition duration-150 bg-black "
+      />
+    </div>
   );
 });
 
