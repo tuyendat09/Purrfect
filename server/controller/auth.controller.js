@@ -90,10 +90,41 @@ exports.handleLogin = asyncHandler(async (req, res) => {
   });
 });
 
-exports.testToken = async (req, res) => {
+exports.handleRefreshToken = asyncHandler(async (req, res) => {
+  const { refreshToken } = req.session;
+  const { success, code } = await authServices.handleRefreshToken(
+    refreshToken,
+    req
+  );
+
+  if (!success) {
+    let message = "Something wrong :(";
+    switch (code) {
+      case "NO_TOKEN":
+        message =
+          "Oops! Looks like you’re not logged in. Mind signing in first?";
+        break;
+      case "INVALID_TOKEN":
+        message = "Oops! Your session seems a bit off. Please log in again";
+        break;
+      case "USER_NOT_FOUND":
+        message =
+          "Whoops! We can’t locate your profile. Time for a fresh login.";
+        break;
+    }
+    return res.status(401).json({ success: false, message });
+  }
+  return res.status(200).json({ success: true });
+});
+
+exports.handleLogout = asyncHandler(async (req, res) => {
+  req.session.destroy();
+
+  return res.status(200).json({ success: true });
+});
+
+exports.handleGetUser = async (req, res) => {
   const { user } = req;
 
   return res.status(200).json(user);
 };
-
-// A new verification code has been sent to your email

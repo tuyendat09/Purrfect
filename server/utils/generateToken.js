@@ -1,7 +1,20 @@
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET, JWT_REFRESH_SECRET } = process.env;
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
-const JWT_EXPIRES_IN = "1h";
+const JWT_EXPIRES_IN = "30m";
+const REFRESH_JWT_EXPIRES_IN = "365d";
+
+exports.generateRefreshToken = (user) => {
+  const payload = {
+    id: user._id,
+    role: user.userRole,
+  };
+
+  const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, {
+    expiresIn: REFRESH_JWT_EXPIRES_IN,
+  });
+  return refreshToken;
+};
 
 exports.generateToken = (user) => {
   const payload = {

@@ -4,8 +4,13 @@ const TempUser = require("../models/TempUser");
 const { sendOtpEmail, generateOTP } = require("../utils/sendOTP");
 const { isValidEmail, isValidPassword } = require("../utils/verifyResigerData");
 const isDocumentExist = require("../utils/isDocumentExist");
-const { generateToken } = require("../utils/generateToken");
+const {
+  handleGenerateToken,
+  generateToken,
+  generateRefreshToken,
+} = require("../utils/generateToken");
 const verifyEmptyData = require("../utils/verifyEmptyData");
+const { verifyRefreshToken } = require("../utils/verifyJWT");
 
 const isUserExist = (email) => {
   return isDocumentExist(User, { email: email });
@@ -148,16 +153,49 @@ const getPublicUser = (user) => {
   };
 };
 
+const handleStoreToken = (user, req) => {
+  const token = generateToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  req.session.token = token;
+  req.session.refreshToken = refreshToken;
+};
+
 exports.handleLogin = async (loginData, req) => {
   const { success, code, user } = await checkCredentials(loginData);
 
   if (!success) return { success: false, code };
 
-  const token = generateToken(user);
-  req.session.token = token;
+  handleStoreToken(user, req);
 
   return {
     success: true,
     user: getPublicUser(user),
   };
+};
+
+const verifyTokenAndGetUser = async (refreshToken) => {
+  if (!refreshToken) return { success: false, code: "NO_TOKEN" };
+
+  const { success, decoded } = verifyRefreshToken(refreshToken);
+  if (!success) return { success: false, code: "INVALID_TOKEN" };
+
+  const user = await User.findById(decoded.id);
+  if (!user) return { success: false, code: "USER_NOT_FOUND" };
+
+  return { success: true, user };
+};
+
+const handleUpdateAccessToken = (user, req) => {
+  const token = generateToken(user);
+  req.session.token = token;
+};
+
+exports.handleRefreshToken = async (refreshToken, req) => {
+  const verifyResult = await verifyTokenAndGetUser(refreshToken);
+  if (!verifyResult.success) return verifyResult;
+
+  handleStoreToken(verifyResult.user, req);
+  console.log("gọi refresh token");
+  return { success: true };
 };
