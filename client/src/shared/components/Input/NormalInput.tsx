@@ -9,6 +9,7 @@ interface NormalInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   endContent?: React.ReactNode;
   borderRadius?: "sm" | "md" | "lg" | "xl" | "full";
   ref?: React.Ref<HTMLInputElement>;
+  inputClassName?: string;
 }
 
 const borderRadiusClass: Record<
@@ -29,6 +30,7 @@ export default function NormalInput({
   endContent,
   borderRadius = "full",
   ref,
+  inputClassName,
   ...inputProps
 }: NormalInputProps) {
   return (
@@ -39,7 +41,8 @@ export default function NormalInput({
       <div
         className={clsx(
           "bg-gray-neutral-200 px-6",
-          borderRadiusClass[borderRadius]
+          borderRadiusClass[borderRadius],
+          inputClassName
         )}
       >
         <div className="flex items-center gap-2">
@@ -47,7 +50,7 @@ export default function NormalInput({
             ref={ref}
             {...inputProps}
             name={name}
-            className="text-sm w-full py-4 focus:outline-none"
+            className="text-sm w-full py-3 focus:outline-none"
             type="text"
           />
         </div>

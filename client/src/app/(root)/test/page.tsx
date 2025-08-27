@@ -1,5 +1,7 @@
 "use client";
 
+import Cluster from "@/shared/components/Cluster/Cluster";
+
 export default function page() {
-  return <div>page</div>;
+  return <Cluster />;
 }

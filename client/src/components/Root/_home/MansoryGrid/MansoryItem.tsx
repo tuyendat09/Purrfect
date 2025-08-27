@@ -61,6 +61,9 @@ const MansoryItem = memo(function MansoryItem({ Element }: MansoryItemProps) {
         setIsLiked={setIsLiked}
         elementId={_id}
       />
+      <p className="text-white group-hover:opacity-100 opacity-0 transition duration-100 absolute top-4 left-4 z-10 ">
+        Cluster
+      </p>
       <Link
         href={`/element/${_id}`}
         className="absolute w-full h-full top-0 left-0  opacity-0 group-hover:opacity-50 cursor-zoom-in transition duration-150 bg-black "
