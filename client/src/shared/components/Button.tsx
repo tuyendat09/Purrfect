@@ -10,12 +10,18 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
 }
 
-const variantClasses: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary: "bg-white text-black hover:bg-[#cfcfd0]",
-  secondary: "bg-gray-neutral-200 text-black hover:bg-gray-neutral-400",
-  black: "bg-black text-white hover:bg-[#292929]",
-  success: "bg-green-600 text-white hover:bg-green-700",
-  danger: "bg-red-600 text-white hover:bg-red-700",
+const variantClasses: Record<
+  NonNullable<ButtonProps["variant"]>,
+  { base: string; hover: string }
+> = {
+  primary: { base: "bg-white text-black", hover: "hover:bg-[#cfcfd0]" },
+  secondary: {
+    base: "bg-gray-neutral-200 text-black",
+    hover: "hover:bg-gray-neutral-400",
+  },
+  black: { base: "bg-black text-white", hover: "hover:bg-[#292929]" },
+  success: { base: "bg-green-600 text-white", hover: "hover:bg-green-700" },
+  danger: { base: "bg-red-600 text-white", hover: "hover:bg-red-700" },
 };
 
 const sizeClasses: Record<NonNullable<ButtonProps["size"]>, string> = {
@@ -40,11 +46,16 @@ export default function Button({
       {...props}
       ref={ref}
       className={clsx(
-        "text-sm cursor-pointer font-bold text-center rounded-full transition duration-300",
-        variantClasses[variant],
+        "text-sm font-bold text-center rounded-full transition duration-300",
+        variantClasses[variant].base,
+        !isDisable && variantClasses[variant].hover,
         sizeClasses[size],
         className,
-        { "w-full": fullWidth }
+        {
+          "w-full": fullWidth,
+          "cursor-normal opacity-50": isDisable,
+          "cursor-pointer": !isDisable,
+        }
       )}
     >
       {children}

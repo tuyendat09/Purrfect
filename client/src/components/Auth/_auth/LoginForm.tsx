@@ -7,7 +7,9 @@ import { clsx } from "clsx";
 import useLogin from "./hooks/useLogin";
 
 export default function LoginForm() {
-  const { formik } = useLogin();
+  const { formik, mutation } = useLogin();
+
+  console.log(mutation.isPending);
 
   return (
     <div
@@ -35,7 +37,12 @@ export default function LoginForm() {
             type="password"
             label="Password"
           />
-          <Button size="lg" fullWidth className="mb-3">
+          <Button
+            isDisable={mutation.isPending}
+            size="lg"
+            fullWidth
+            className="mb-3"
+          >
             Enter
           </Button>
         </form>

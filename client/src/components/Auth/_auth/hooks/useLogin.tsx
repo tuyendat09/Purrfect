@@ -20,12 +20,15 @@ export default function useLogin() {
       return login(values);
     },
     onMutate: () => {
-      toast.loading("Login");
+      const toastId = toast.loading("Login");
+      return { toastId };
     },
-    onError(error) {
+    onError(error, _variables, context) {
+      toast.dismiss(context?.toastId);
       toast.error(error.message);
     },
-    onSuccess: () => {
+    onSuccess: (_data, _variables, context) => {
+      toast.dismiss(context?.toastId);
       router.push("/");
     },
   });

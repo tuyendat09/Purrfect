@@ -70,7 +70,7 @@ export default function Element({ id }: { id: string }) {
             />
           </div>
           <div className="w-1/4 h-full flex items-center">
-            <div className="w-full h-[95%] bg-gray-neutral-200 rounded-3xl mr-4 p-4 flex flex-col">
+            <div className="w-full h-[95%] bg-gray-neutral-200 rounded-3xl mr-4 p-4 flex flex-col relative">
               {/* Header */}
               <div className="flex justify-between">
                 <div className="cursor-pointer w-fit p-4 hover:bg-gray-neutral-400 transition bg-gray-neutral-300 rounded-full">
@@ -89,9 +89,10 @@ export default function Element({ id }: { id: string }) {
               </div>
 
               {/* Comment */}
+
               <div
                 className={clsx(
-                  "mt-[40px] flex-1 pr-2 no-scrollbar ",
+                  "mt-[40px] flex-1 pr-2 no-scrollbar",
                   isScrollable ? "overflow-y-auto" : "overflow-visible"
                 )}
               >
@@ -101,7 +102,7 @@ export default function Element({ id }: { id: string }) {
                   {Array.from({ length: 40 }).map((_, idx) => (
                     <div
                       key={idx}
-                      className="mb-4 p-3 bg-gray-neutral-300 hover:bg-gray-neutral-400 transition rounded-lg shadow-sm"
+                      className="mb-4 p-3 bg-gray-neutral-300 hover:bg-gray-neutral-400 transition rounded-2xl shadow-sm"
                     >
                       <p className="font-semibold text-sm text-gray-neutral-900">
                         User123
