@@ -8,7 +8,9 @@ export interface DropMenuContextType {
 export const DropMenuContext = createContext<DropMenuContextType | null>(null);
 
 export function useDropMenuContext() {
+  
   const context = useContext(DropMenuContext);
+
   if (!context) {
     throw new Error("DropMenu subcomponent must be used within <DropMenu>");
   }
