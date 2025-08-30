@@ -29,3 +29,16 @@ exports.handleCreateCluster = asyncHandler(async (req, res) => {
     message: "Boom! Album created. Time to fill it with awesome pics!",
   });
 });
+
+exports.handleQueryCluster = asyncHandler(async (req, res) => {
+  const query = req.query;
+  const userId = req.user.id;
+
+  const queryData = { query, userId };
+
+  const result = await clusterServices.handleQueryCluster(queryData);
+
+  // Tìm Cluster theo User, gửi UserID đến cho Server, rồi find theo UserID,
+  // Tìm tất cả các Cluster chứa elementID đc client gửi đến.
+  return res.status(200).json(result);
+});

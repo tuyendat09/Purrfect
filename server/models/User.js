@@ -22,10 +22,12 @@ const userSchema = new Schema(
       },
     },
 
-    displayName: {
+    username: {
       type: String,
       default: null,
     },
+
+    userFullname: { type: String, default: null },
 
     profilePicture: {
       type: String,

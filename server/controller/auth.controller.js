@@ -2,10 +2,11 @@ const asyncHandler = require("../middleware/asyncHandler");
 const authServices = require("../services/auth.services");
 
 exports.handleRegister = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, userFullname } = req.body;
   const newUserData = {
     email,
     password: String(password),
+    userFullname,
   };
 
   const { success, code } = await authServices.handleRegister(newUserData);
@@ -59,6 +60,7 @@ exports.handleVerifyOTP = asyncHandler(async (req, res) => {
 
 exports.handleLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  await new Promise((resolve) => setTimeout(resolve, 150));
 
   const loginData = {
     email,
@@ -84,6 +86,7 @@ exports.handleLogin = asyncHandler(async (req, res) => {
     }
     return res.status(400).json({ success: false, message });
   }
+
   return res.status(200).json({
     success: true,
     user,
@@ -118,9 +121,15 @@ exports.handleRefreshToken = asyncHandler(async (req, res) => {
 });
 
 exports.handleLogout = asyncHandler(async (req, res) => {
-  req.session.destroy();
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Logout error:", err);
+      return res.status(500).json({ success: false, message: "Logout failed" });
+    }
 
-  return res.status(200).json({ success: true });
+    res.clearCookie("connect.sid");
+    return res.status(200).json({ success: true });
+  });
 });
 
 exports.handleGetUser = async (req, res) => {
@@ -128,3 +137,23 @@ exports.handleGetUser = async (req, res) => {
 
   return res.status(200).json(user);
 };
+
+exports.handleEditUserName = asyncHandler(async (req, res) => {
+  const { email, username } = req.body;
+  const { success, code } = authServices.handleChangeUserName(email, username);
+
+  if (!success) {
+    let message = "Something wrong :(";
+    switch (code) {
+      case "USER_NOTFOUND":
+        message =
+          "Oops! Looks like you’re not logged in. Mind signing in first?";
+        break;
+      case "USERNAME_EXIST":
+        message = "Oops! That username is already taken. Try another one";
+        break;
+    }
+    return res.status(401).json({ success: false, message });
+  }
+  return res.status(200).json({ success: true });
+});

@@ -3,6 +3,7 @@ const ElementLike = require("../models/ElementLike");
 const { getEmbedCLIP } = require("../utils/getEmbedCLIP");
 const { uploadFileToS3 } = require("../utils/uploadToAWS");
 const redis = require("../redisClient");
+const { getCacheKey } = require("../utils/redisCache");
 
 async function processEmbedding(file) {
   return await getEmbedCLIP(file);
@@ -85,10 +86,7 @@ async function queryElement({ filter, sort, skip, limit }) {
   return await Element.find(filter).sort(sort).skip(skip).limit(limit);
 }
 
-function getCacheKey(filter, sort, page, limit) {
-  const keyObj = { filter, sort, page, limit };
-  return `elements:${JSON.stringify(keyObj)}`;
-}
+
 
 async function clearUserElementCache(userId) {
   const stream = redis.scanStream({
@@ -106,7 +104,6 @@ exports.handleQueryElement = async (queryData) => {
   const { filter, sort } = prepareQuery(query);
   const { skip, limit, currentPage } = handlePaginateElement(query);
 
-  // Không dùng cache nếu có query.id
   const useCache = currentPage <= 10 && !query.id;
   const cacheKey =
     getCacheKey(filter, sort, currentPage, limit) + `:user:${userId}`;

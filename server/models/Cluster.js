@@ -10,8 +10,9 @@ const clustersSchema = new Schema(
       required: true,
     },
     createdBy: {
-      type: String,
-      required: true,
+      userId: { type: ObjectId, required: true },
+      userPicture: { type: String, required: true },
+      userFullname: { type: String, required: true },
     },
     elementIds: [
       {

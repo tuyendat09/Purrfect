@@ -21,13 +21,14 @@ const isTempUserExist = (email) => {
 };
 
 const createTempUser = async (newUserData, otp) => {
-  const { email, password } = newUserData;
+  const { email, password, userFullname } = newUserData;
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const tempUser = new TempUser({
     email: email,
     password: hashedPassword,
     otp,
+    userFullname,
   });
 
   await tempUser.save();
@@ -91,11 +92,12 @@ function isOTPValid(tempUser, otp) {
 }
 
 async function createUserFromTemp(tempUser) {
-  const { email, password } = tempUser;
+  const { email, password, userFullname } = tempUser;
 
   const newUser = new User({
     email,
     password,
+    userFullname,
   });
 
   await newUser.save();
@@ -148,7 +150,7 @@ const getPublicUser = (user) => {
   return {
     id: user._id,
     email: user.email,
-    displayName: user.displayName,
+    username: user.username,
     profilePicture: user.profilePicture,
   };
 };
@@ -186,16 +188,47 @@ const verifyTokenAndGetUser = async (refreshToken) => {
   return { success: true, user };
 };
 
-const handleUpdateAccessToken = (user, req) => {
-  const token = generateToken(user);
-  req.session.token = token;
-};
-
 exports.handleRefreshToken = async (refreshToken, req) => {
   const verifyResult = await verifyTokenAndGetUser(refreshToken);
   if (!verifyResult.success) return verifyResult;
 
   handleStoreToken(verifyResult.user, req);
   console.log("gọi refresh token");
+  return { success: true };
+};
+
+async function checkUsernameExist(username) {
+  const existing = await User.findOne({
+    username,
+  });
+  return !!existing;
+}
+
+async function updateUserName(user, username) {
+  user.username = username;
+  await user.save();
+  return user;
+}
+
+// 5️⃣ Hàm điều phối
+const validateUserNameChange = async (email, username) => {
+  const emptyCheck = verifyEmptyData({ email, username });
+  if (!emptyCheck.success) return emptyCheck;
+
+  const user = await isUserExist(email);
+  if (!user) return { success: false, code: "USER_NOTFOUND" };
+
+  const usernameExist = await checkUsernameExist(username);
+  if (usernameExist) return { success: false, code: "USERNAME_EXIST" };
+
+  return { success: true, user };
+};
+
+exports.handleChangeUserName = async (email, username) => {
+  const { success, code, user } = await validateUserNameChange(email, username);
+  if (!success) return { success, code };
+
+  await updateUserName(user, username);
+
   return { success: true };
 };

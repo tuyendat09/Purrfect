@@ -5,5 +5,6 @@ const checkRole = require("../middleware/checkRole");
 
 
 router.post("/create", clusterController.handleCreateCluster);
+router.get("/",clusterController.handleQueryCluster)
 
 module.exports = router;

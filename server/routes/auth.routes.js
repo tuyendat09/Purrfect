@@ -8,6 +8,7 @@ router.post("/register", authController.handleRegister);
 router.post("/login", authController.handleLogin);
 router.post("/verifyOTP", authController.handleVerifyOTP);
 router.post("/logout", authController.handleLogout);
+router.put("/changeUserName", authController.handleEditUserName);
 router.post("/refresh-token", authController.handleRefreshToken);
 router.get("/", checkRole(["user"]), authController.handleGetUser);
 
