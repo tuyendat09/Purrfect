@@ -133,7 +133,7 @@ const checkCredentials = async (loginData) => {
 
   const { email, password } = loginData;
 
-  const user = await User.findOne({ email });
+  const user = await isUserExist({ email });
   if (!user) {
     return { success: false, code: "INVALID_CREDENTIALS" };
   }
@@ -210,7 +210,6 @@ async function updateUserName(user, username) {
   return user;
 }
 
-// 5️⃣ Hàm điều phối
 const validateUserNameChange = async (email, username) => {
   const emptyCheck = verifyEmptyData({ email, username });
   if (!emptyCheck.success) return emptyCheck;
@@ -226,6 +225,7 @@ const validateUserNameChange = async (email, username) => {
 
 exports.handleChangeUserName = async (email, username) => {
   const { success, code, user } = await validateUserNameChange(email, username);
+
   if (!success) return { success, code };
 
   await updateUserName(user, username);

@@ -39,7 +39,7 @@ exports.handleCreateCluster = async (newClusterData) => {
 };
 
 function prepareQuery(params = {}, userId) {
-  const { name, byUserId, id, exceptId, userFullname } = params;
+  const { elementId, name, byUserId, id, exceptId, userFullname } = params;
   console.log(userId);
   const filter = {};
   const sort = { createdAt: -1 }; // mặc định sắp xếp mới nhất
@@ -59,6 +59,10 @@ function prepareQuery(params = {}, userId) {
 
   if (byUserId) {
     filter["createdBy.userId"] = userId;
+  }
+
+  if (elementId) {
+    filter.elementIds = elementId;
   }
 
   if (userFullname) {
