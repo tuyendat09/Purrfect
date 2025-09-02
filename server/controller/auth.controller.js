@@ -37,7 +37,7 @@ exports.handleVerifyOTP = asyncHandler(async (req, res) => {
   const { email, OTP } = req.body;
   const verifyData = { email, OTP };
 
-  const { success, code } = await authServices.handleVerifyOTP(verifyData);
+  const { success, code } = await authServices.handleVerifyOTP(verifyData, req);
 
   if (!success) {
     let message = "Something wrong :(";
@@ -135,6 +135,7 @@ exports.handleLogout = asyncHandler(async (req, res) => {
 exports.handleGetUser = async (req, res) => {
   const { user } = req;
 
+  // gọi hàm handleGetUser, tìm user theo id trong token rồi return về
   return res.status(200).json(user);
 };
 

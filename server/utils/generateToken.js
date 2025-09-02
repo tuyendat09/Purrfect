@@ -9,6 +9,7 @@ function preparePayload(user) {
     id: user._id,
     role: user.userRole,
     profilePicture: user.profilePicture,
+    username: user.username,
     userFullname: user.userFullname,
   };
   return payload;

@@ -81,7 +81,7 @@ exports.handleRegister = async (newUserData) => {
 
   const OTP = await generateOTP();
   await createOrUpdateTempUser(newUserData, OTP);
-  await sendOtpEmail(email, OTP);
+  sendOtpEmail(email, OTP);
 
   return { success: true, code: "REGISTER_COMPLETE" };
 };
@@ -108,7 +108,12 @@ const deleteTempUser = async (email) => {
   await TempUser.deleteOne({ email: email });
 };
 
-exports.handleVerifyOTP = async (verifyData) => {
+async function loginAfterVerifyOTP(email, req) {
+  const user = await isUserExist(email);
+  handleStoreToken(user, req);
+}
+
+exports.handleVerifyOTP = async (verifyData, req) => {
   const { email, OTP } = verifyData;
   const tempUser = await TempUser.findOne({ email });
 
@@ -122,6 +127,7 @@ exports.handleVerifyOTP = async (verifyData) => {
 
   const newUser = await createUserFromTemp(tempUser);
   await deleteTempUser(email);
+  await loginAfterVerifyOTP(email, req);
 
   return { success: true, user: newUser };
 };
@@ -133,7 +139,7 @@ const checkCredentials = async (loginData) => {
 
   const { email, password } = loginData;
 
-  const user = await isUserExist({ email });
+  const user = await isUserExist(email);
   if (!user) {
     return { success: false, code: "INVALID_CREDENTIALS" };
   }
@@ -156,11 +162,13 @@ const getPublicUser = (user) => {
 };
 
 const handleStoreToken = (user, req) => {
+  console.log("call");
   const token = generateToken(user);
   const refreshToken = generateRefreshToken(user);
 
   req.session.token = token;
   req.session.refreshToken = refreshToken;
+  console.log(req.session);
 };
 
 exports.handleLogin = async (loginData, req) => {
