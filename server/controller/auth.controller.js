@@ -133,9 +133,8 @@ exports.handleLogout = asyncHandler(async (req, res) => {
 });
 
 exports.handleGetUser = async (req, res) => {
-  const { user } = req;
+  const userId = req.user.id;
 
-  // gọi hàm handleGetUser, tìm user theo id trong token rồi return về
   return res.status(200).json(user);
 };
 

@@ -8,9 +8,6 @@ function preparePayload(user) {
   const payload = {
     id: user._id,
     role: user.userRole,
-    profilePicture: user.profilePicture,
-    username: user.username,
-    userFullname: user.userFullname,
   };
   return payload;
 }

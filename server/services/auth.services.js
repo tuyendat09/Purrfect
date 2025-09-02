@@ -113,8 +113,7 @@ async function loginAfterVerifyOTP(email, req) {
   handleStoreToken(user, req);
 }
 
-exports.handleVerifyOTP = async (verifyData, req) => {
-  const { email, OTP } = verifyData;
+async function getValidTempUser(email, OTP) {
   const tempUser = await TempUser.findOne({ email });
 
   if (!tempUser) {
@@ -125,11 +124,21 @@ exports.handleVerifyOTP = async (verifyData, req) => {
     return { success: false, code: "INVALID_OTP" };
   }
 
-  const newUser = await createUserFromTemp(tempUser);
+  return { success: true, tempUser };
+}
+
+exports.handleVerifyOTP = async (verifyData, req) => {
+  const { email, OTP } = verifyData;
+
+  const { success, code, tempUser } = await getValidTempUser(email, OTP);
+
+  if (!success) return { success, code };
+
+  await createUserFromTemp(tempUser);
   await deleteTempUser(email);
   await loginAfterVerifyOTP(email, req);
 
-  return { success: true, user: newUser };
+  return { success: true };
 };
 
 const checkCredentials = async (loginData) => {
@@ -201,7 +210,6 @@ exports.handleRefreshToken = async (refreshToken, req) => {
   if (!verifyResult.success) return verifyResult;
 
   handleStoreToken(verifyResult.user, req);
-  console.log("gọi refresh token");
   return { success: true };
 };
 
@@ -239,4 +247,24 @@ exports.handleChangeUserName = async (email, username) => {
   await updateUserName(user, username);
 
   return { success: true };
+};
+
+const prepareUser = async (userId) => {
+  const user = await User.findById(userId).lean();
+
+  if (!user) {
+    return { success: false, code: "USER_NOT_FOUND" };
+  }
+  return user;
+};
+
+exports.handleGetUser = async (userId) => {
+  const result = await prepareUser(userId);
+
+  if (!user) {
+    return result;
+  }
+
+  const publicUser = getPublicUser(result);
+  return { success: true, user: publicUser };
 };
