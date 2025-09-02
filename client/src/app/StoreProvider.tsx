@@ -45,9 +45,12 @@ export default function StoreProvider({ children }: Props) {
   const pathname = usePathname();
 
   const queryClient = getQueryClient();
-  const shouldRenderHeader = !["auth", "element", "onboarding"].some(
-    (segment) => pathname.includes(segment)
-  );
+  const shouldRenderHeader = ![
+    "auth",
+    "element",
+    "onboarding",
+    "claim-username",
+  ].some((segment) => pathname.includes(segment));
 
   return (
     <QueryClientProvider client={queryClient}>

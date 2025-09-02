@@ -1,4 +1,4 @@
-import "./Login.css";
+import "../Auth.css";
 import LoginForm from "./LoginForm";
 import LoginVideo from "./LoginVideo";
 import { AuthTransitionProvider } from "../../../shared/context/AuthTransitionContext";

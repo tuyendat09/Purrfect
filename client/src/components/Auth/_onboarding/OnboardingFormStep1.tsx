@@ -1,6 +1,5 @@
 "use client";
 import FloatingInput from "@/shared/components/Input/FloatingInput";
-import "./Onboarding.css";
 import FormHeader from "@/shared/components/Form/FormHeader";
 import Button from "@/shared/components/Button";
 import { clsx } from "clsx";

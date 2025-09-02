@@ -1,5 +1,4 @@
 "use client";
-import "./Onboarding.css";
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";

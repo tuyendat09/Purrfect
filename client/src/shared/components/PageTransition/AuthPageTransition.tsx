@@ -3,7 +3,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import "../../../components/Auth/_auth/Login.css";
+import "../../../components/Auth/Auth.css";
 import { useAuthTransitionContext } from "../../context/AuthTransitionContext";
 
 export default function AuthPageTransition() {

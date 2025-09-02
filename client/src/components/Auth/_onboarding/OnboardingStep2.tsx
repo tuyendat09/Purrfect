@@ -1,5 +1,4 @@
 "use client";
-import "./Onboarding.css";
 import Button from "@/shared/components/Button";
 import { Icon } from "@iconify/react";
 import OTPInput from "@/shared/components/Input/OTPInput";
