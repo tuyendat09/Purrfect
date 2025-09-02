@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 const DOMAIN_API = process.env.NEXT_PUBLIC_DOMAIN_API;
@@ -15,15 +16,16 @@ export async function middleware(request: NextRequest) {
     const verifyRes = await fetch(`${DOMAIN_API}/api/auth/`, {
       method: "GET",
       headers: {
-        Cookie: `sid=${token}`, // gửi cookie thủ công
         Accept: "application/json",
       },
-      cache: "no-store", // không cache
+      cache: "no-store",
     });
 
-    if (!verifyRes.ok) {
+    if ((!verifyRes as any).user) {
       // Token invalid → clear cookie và redirect về /auth
       const res = NextResponse.redirect(new URL("/auth", request.url));
+
+      //Next step ktra xem trong Token co username k, neu username = null thi navigate ve /claim-username
       res.cookies.delete("sid");
       return res;
     }

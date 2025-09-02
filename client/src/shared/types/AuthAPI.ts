@@ -2,6 +2,7 @@ import { PublicUser } from "./User";
 
 export interface ParamsRegister {
   email: string;
+  userFullname: string;
   password: string;
 }
 

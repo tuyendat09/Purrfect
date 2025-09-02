@@ -5,13 +5,6 @@ import { useState } from "react";
 import { useOnboardingStepContext } from "../context/OnboardingStepContext";
 import { toast } from "react-hot-toast";
 
-interface errorsValues {
-  email: string;
-  username: string;
-  password: string;
-  confirmPassword: string;
-}
-
 export default function useOnboardingStep1() {
   const { setStep, setEmail } = useOnboardingStepContext();
   const [isButtonHidden, setIsButtonHidden] = useState<boolean>(false);
@@ -36,24 +29,19 @@ export default function useOnboardingStep1() {
   const formik = useFormik({
     initialValues: {
       email: "",
+      userFullname: "",
       password: "",
     },
     onSubmit: async (values) => {
       const promise = mutation.mutateAsync(values);
 
       await toast.promise(promise, {
-        loading: "Đang đăng ký...",
-        success: "Đăng ký thành công!",
-        error: (err) => err.message || "Đăng ký thất bại",
+        loading: "Hold on",
+        success: "Complete!",
+        error: (err) => err.message,
       });
 
       return promise;
-    },
-    validate: (values) => {
-      const errors: Partial<errorsValues> = {};
-      console.log(values);
-
-      return errors;
     },
   });
 

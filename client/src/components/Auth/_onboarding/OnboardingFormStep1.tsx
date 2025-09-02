@@ -40,6 +40,11 @@ export default function OnboardingFormStep1() {
             label="Email"
           />
           <FloatingInput
+            name="userFullname"
+            onChange={formik.handleChange}
+            label="Full name"
+          />
+          <FloatingInput
             onChange={formik.handleChange}
             name="password"
             type="password"

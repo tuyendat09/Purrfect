@@ -8,9 +8,7 @@ import useLogin from "./hooks/useLogin";
 
 export default function LoginForm() {
   const { formik, mutation } = useLogin();
-
-  console.log(mutation.isPending);
-
+  
   return (
     <div
       className={clsx(
