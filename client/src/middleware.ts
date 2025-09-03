@@ -16,12 +16,15 @@ export async function middleware(request: NextRequest) {
     const verifyRes = await fetch(`${DOMAIN_API}/api/auth/`, {
       method: "GET",
       headers: {
+        Cookie: `sid=${token}`,
+
         Accept: "application/json",
       },
       cache: "no-store",
     });
+    const data = await verifyRes.json();
 
-    if ((!verifyRes as any).user) {
+    if (!data.user) {
       // Token invalid → clear cookie và redirect về /auth
       const res = NextResponse.redirect(new URL("/auth", request.url));
 
@@ -30,11 +33,13 @@ export async function middleware(request: NextRequest) {
       return res;
     }
 
-    const data = await verifyRes.json();
-
     // Nếu đang ở /auth mà user đã login → redirect về /
     if (pathname === "/auth" && data.success && data.user) {
       return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    if (data.user && data.user.username == null) {
+      return NextResponse.redirect(new URL("/claim-username", request.url));
     }
   }
 

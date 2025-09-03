@@ -39,7 +39,7 @@ function UserProfilePicture({
   return (
     <div>
       <Image
-        className="size-10 rounded-full"
+        className="size-6 rounded-full"
         src={UserDefaultPicture}
         width={100}
         height={100}

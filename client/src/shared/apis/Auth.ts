@@ -6,6 +6,7 @@ import {
   ParamsVerifyOTP,
   ParamsLogin,
   LoginResponse,
+  ParamsChangeUsername,
 } from "../types/AuthAPI";
 
 import { createRequest } from "../utils/httpRequestBuilder";
@@ -123,4 +124,20 @@ export const logout = async (): Promise<APIResponseType> => {
     console.error("❌ Login failed:", error);
     throw error;
   }
+};
+
+export const changeUsername = async (
+  params: ParamsChangeUsername
+): Promise<APIResponseType> => {
+  return withAuthRetry(() =>
+    createRequest(DOMAIN_API)
+      .setPath("/api/auth/changeUserName")
+      .setMethod("PUT")
+      .setHeaders({
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      })
+      .setBody(params)
+      .send<APIResponseType>()
+  );
 };

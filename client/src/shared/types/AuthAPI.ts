@@ -16,6 +16,10 @@ export interface ParamsLogin {
   password: string;
 }
 
+export interface ParamsChangeUsername {
+  username: string;
+}
+
 export interface LoginResponse {
   success: boolean;
   user: PublicUser;

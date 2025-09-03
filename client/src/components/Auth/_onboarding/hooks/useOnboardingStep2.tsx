@@ -33,9 +33,9 @@ export default function useOnboardingStep2() {
       const promise = mutation.mutateAsync({ email: email, OTP: otp });
 
       await toast.promise(promise, {
-        loading: "Đang đăng ký...",
-        success: "Đăng ký thành công chuẩn bị quay về trang chủ!",
-        error: (err) => err.message || "Đăng ký thất bại",
+        loading: "Hold on",
+        success: "Just one more step!.",
+        error: (err) => err.message,
       });
 
       return promise;

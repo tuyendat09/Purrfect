@@ -96,7 +96,7 @@ export default function OnboardingFormStep2() {
             <Button
               size="lg"
               ref={buttonRef}
-              className=" scale-0 origin-bottom "
+              className=" scale-0 origin-bottom !px-4"
             >
               <Icon icon="stash:chevron-right-duotone" width="24" height="24" />
             </Button>

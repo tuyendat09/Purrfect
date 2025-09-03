@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { useRef, useEffect } from "react";
 
 export default function OnboardingVideo() {
+  
   const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {

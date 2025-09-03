@@ -3,15 +3,15 @@ import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useRouter } from "next/navigation";
 import { useOnboardingStepContext } from "./context/OnboardingStepContext";
+import { useAuthTransitionContext } from "@/shared/context/AuthTransitionContext";
 
 export default function OnboardingFormStep3() {
+  const { handleTransition } = useAuthTransitionContext();
   const progressRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLParagraphElement>(null);
   const checkRef = useRef<HTMLDivElement>(null);
   const transitionRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   const { step } = useOnboardingStepContext();
 
@@ -63,19 +63,38 @@ export default function OnboardingFormStep3() {
       );
 
       tl.to(
+        textRef.current,
+        {
+          opacity: 0,
+          duration: 1,
+          ease: "power2.out",
+        },
+        "+=.3"
+      );
+
+      tl.to(
+        checkRef.current,
+        {
+          opacity: 0,
+          display: "block",
+          duration: 1,
+          ease: "power2.out",
+        },
+        "<"
+      );
+
+      tl.to(
         transitionRef.current,
         {
           x: 0,
           duration: 1,
-          ease: "power2.out",
+          ease: "power2.in",
         },
-        "+=.5"
+        "+=.2"
       );
 
       tl.eventCallback("onComplete", () => {
-        setTimeout(() => {
-          router.push("/"); //
-        }, 500);
+        handleTransition("/claim-username");
       });
     }
   }, [step]);
@@ -84,10 +103,6 @@ export default function OnboardingFormStep3() {
 
   return (
     <div className="flex items-center grow-1 ">
-      <div
-        ref={transitionRef}
-        className="bg-[#f5f4f2] fixed top-0 right-0 w-screen h-screen z-50 -translate-x-full"
-      />
       <div className="w-[440px] z-10 h-[664px] mx-auto text-white flex justify-center flex-col items-center py-8 px-8">
         <div>
           <div className="opacity-0" ref={checkRef}>
