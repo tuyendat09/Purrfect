@@ -11,6 +11,7 @@ const {
 } = require("../utils/generateToken");
 const verifyEmptyData = require("../utils/verifyEmptyData");
 const { verifyRefreshToken } = require("../utils/verifyJWT");
+const redis = require("../redisClient");
 
 const isUserExist = (email) => {
   return isDocumentExist(User, { email: email });
@@ -109,7 +110,7 @@ const deleteTempUser = async (email) => {
 };
 
 async function loginAfterVerifyOTP(email, req) {
-  const user = await isUserExist(email);
+  const user = await User.findOne({ email: email });
   handleStoreToken(user, req);
 }
 
@@ -148,7 +149,7 @@ const checkCredentials = async (loginData) => {
 
   const { email, password } = loginData;
 
-  const user = await isUserExist(email);
+  const user = await User.findOne({ email: email });
   if (!user) {
     return { success: false, code: "INVALID_CREDENTIALS" };
   }
@@ -164,20 +165,18 @@ const checkCredentials = async (loginData) => {
 const getPublicUser = (user) => {
   return {
     id: user._id,
-    email: user.email,
     username: user.username,
+    userFullname: user.userFullname,
     profilePicture: user.profilePicture,
   };
 };
 
 const handleStoreToken = (user, req) => {
-  console.log("call");
   const token = generateToken(user);
   const refreshToken = generateRefreshToken(user);
 
   req.session.token = token;
   req.session.refreshToken = refreshToken;
-  console.log(req.session);
 };
 
 exports.handleLogin = async (loginData, req) => {
@@ -226,11 +225,12 @@ async function updateUserName(user, username) {
   return user;
 }
 
-const validateUserNameChange = async (email, username) => {
-  const emptyCheck = verifyEmptyData({ email, username });
+const validateUserNameChange = async (userId, username) => {
+  const emptyCheck = verifyEmptyData({ username });
   if (!emptyCheck.success) return emptyCheck;
 
-  const user = await isUserExist(email);
+  const user = await User.findById(userId);
+
   if (!user) return { success: false, code: "USER_NOTFOUND" };
 
   const usernameExist = await checkUsernameExist(username);
@@ -239,12 +239,27 @@ const validateUserNameChange = async (email, username) => {
   return { success: true, user };
 };
 
-exports.handleChangeUserName = async (email, username) => {
-  const { success, code, user } = await validateUserNameChange(email, username);
+const revalidateCache = async (userId) => {
+  const cacheKey = `user:${userId}`;
+
+  const user = await prepareUser(userId);
+  if (user?.success === false) {
+    return user;
+  }
+  const publicUser = getPublicUser(user);
+
+  await redis.set(cacheKey, JSON.stringify(publicUser), "EX", 300);
+};
+exports.handleChangeUserName = async (userId, username) => {
+  const { success, code, user } = await validateUserNameChange(
+    userId,
+    username
+  );
 
   if (!success) return { success, code };
 
   await updateUserName(user, username);
+  await revalidateCache(userId);
 
   return { success: true };
 };
@@ -259,12 +274,25 @@ const prepareUser = async (userId) => {
 };
 
 exports.handleGetUser = async (userId) => {
-  const result = await prepareUser(userId);
+  const cacheKey = `user:${userId}`;
 
-  if (!user) {
-    return result;
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    const parsed = JSON.parse(cached);
+    console.log("data from cached");
+    return { success: true, user: parsed };
   }
 
-  const publicUser = getPublicUser(result);
+  const user = await prepareUser(userId);
+
+  if (user?.success === false) {
+    return user;
+  }
+
+  const publicUser = getPublicUser(user);
+
+  await redis.set(cacheKey, JSON.stringify(publicUser), "EX", 300);
+  console.log("data cache in redis");
+
   return { success: true, user: publicUser };
 };

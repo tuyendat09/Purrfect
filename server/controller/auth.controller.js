@@ -134,13 +134,19 @@ exports.handleLogout = asyncHandler(async (req, res) => {
 
 exports.handleGetUser = async (req, res) => {
   const userId = req.user.id;
+  const user = await authServices.handleGetUser(userId);
 
   return res.status(200).json(user);
 };
 
 exports.handleEditUserName = asyncHandler(async (req, res) => {
-  const { email, username } = req.body;
-  const { success, code } = authServices.handleChangeUserName(email, username);
+  const { username } = req.body;
+  const userId = req.user.id;
+
+  const { success, code } = await authServices.handleChangeUserName(
+    userId,
+    username
+  );
 
   if (!success) {
     let message = "Something wrong :(";
@@ -153,7 +159,9 @@ exports.handleEditUserName = asyncHandler(async (req, res) => {
         message = "Oops! That username is already taken. Try another one";
         break;
     }
-    return res.status(401).json({ success: false, message });
+    return res.status(400).json({ success: false, message });
   }
-  return res.status(200).json({ success: true });
+  return res
+    .status(200)
+    .json({ success: true, message: "Nice! Your username has been set. 🎉" });
 });

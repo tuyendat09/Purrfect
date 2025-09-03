@@ -35,7 +35,6 @@ exports.handleCreateNewElement = async (uploadData) => {
   const userId = user.id;
 
   const { embedding, tags } = await processEmbedding(file);
-  console.log(tags);
   const { originalUrl, previewUrl } = await handleUpload(file);
 
   const newElementData = { originalUrl, previewUrl, userId, embedding, tags };
@@ -85,8 +84,6 @@ function handlePaginateElement(params = {}) {
 async function queryElement({ filter, sort, skip, limit }) {
   return await Element.find(filter).sort(sort).skip(skip).limit(limit);
 }
-
-
 
 async function clearUserElementCache(userId) {
   const stream = redis.scanStream({
@@ -141,7 +138,7 @@ exports.handleQueryElement = async (queryData) => {
     hasNextPage,
   };
 
-  // Lưu cache chỉ nếu dùng
+  // Lưu cache
   if (useCache) {
     await redis.set(cacheKey, JSON.stringify(result), "EX", 300);
     console.log("📌 Data cached in Redis");
