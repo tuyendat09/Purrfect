@@ -12,12 +12,12 @@ export function useInfiniteElements(
   const isInView = useInView(loadMoreRef, { margin: "0px 0px 200px 0px" });
 
   const query = useInfiniteQuery({
-    queryKey: ["masonryImages", extraQuery], // thêm extraQuery để phân biệt cache
+    queryKey: ["masonryImages", extraQuery],
     queryFn: async ({ pageParam = 1 as number }) => {
       return handleGetElement({
         page: pageParam,
-        limit: 20,
-        ...extraQuery, // merge các query khác vào
+        limit: 10,
+        ...extraQuery,
       });
     },
     getNextPageParam: (lastPage, pages) =>

@@ -39,7 +39,7 @@ export default function useLogin() {
       password: "",
     },
     onSubmit: async (values) => {
-      const promise = mutation.mutateAsync(values);
+      const promise = mutation.mutate(values);
       return promise;
     },
     validate: (values) => {

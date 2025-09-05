@@ -1,9 +1,9 @@
 import Button from "@/shared/components/Button";
 import useLikeElement from "./hook/useLikeElement";
-import Cluster from "@/shared/components/Cluster/Cluster";
-import { useEffect, useRef } from "react";
+import { lazy, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { clsx } from "clsx";
+const Cluster = lazy(() => import("@/shared/components/Cluster/Cluster"));
 
 interface MasonryButtonProps {
   elementId: string;
@@ -79,14 +79,13 @@ export function MansoryClusterButton({
         />
       </div>
 
-      {/* Dropdown cluster content */}
       <div
         className={clsx(
           "absolute -left-3 top-12",
           openCluster ? "block" : "hidden"
         )}
       >
-        <Cluster />
+        {openCluster && <Cluster />}
       </div>
     </div>
   );

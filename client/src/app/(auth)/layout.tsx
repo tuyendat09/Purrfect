@@ -32,7 +32,7 @@ export default function RootLayout({
       className={`${dmSANS.variable} ${playfairDisplay.variable}  antialiased`}
       lang="en"
     >
-      <body>
+      <body suppressHydrationWarning>
         <StoreProvider>
           <Toaster
             position="bottom-center" // Đặt toaster ở giữa dưới

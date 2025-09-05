@@ -9,6 +9,8 @@ export interface GetElementQuery {
   popular?: boolean;
 }
 
+
+
 export interface Element {
   _id: string;
   imageUrl: string;

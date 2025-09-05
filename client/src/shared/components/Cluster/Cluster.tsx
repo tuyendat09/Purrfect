@@ -1,73 +1,34 @@
-  import Image from "next/image";
-  import NormalInput from "../Input/NormalInput";
-  import { Icon } from "@iconify/react/dist/iconify.js";
+"use client";
 
-  export default function Cluster() {
-    return (
-      <div>
-        <div className="bg-gray-neutral-200 w-[310px] h-[400px] rounded-3xl p-4 overflow-hidden flex flex-col">
-          {/* Header */}
-          <div>
-            <h1 className="font-serif text-center text-lg">Connect</h1>
-            <div className="mt-4">
-              <NormalInput
-                placeholder="Search..."
-                inputClassName="!bg-gray-neutral-300"
-                name="search"
-              />
-            </div>
-          </div>
+import Image from "next/image";
+import NormalInput from "../Input/NormalInput";
+import useQueryCluster from "./hook/useQueryCluster";
+import ClusterList from "./ClusterList";
+import ClusterFooter from "./ClusterFooter";
+import { useState } from "react";
+import useDebounce from "@/shared/hook/useDebouce";
+import ClusterHeader from "./ClusterHeader";
 
-          <div className="overflow-auto no-scrollbar">
-            <ul className="space-y-2">
-              {Array.from({ length: 10 }).map((_, index) => (
-                // Cluster Item
-                <li
-                  className="hover:bg-gray-neutral-400 p-2 rounded-2xl transition"
-                  key={index}
-                >
-                  <button className="flex items-center w-full">
-                    <div className="size-10 mr-4">
-                      <div className="bg-red-500 w-full h-full rounded-xl overflow-hidden">
-                        <img
-                          className="w-full h-full object-cover"
-                          src="https://cdn.cosmos.so/b4aa7803-c3b0-4e71-a458-2f9dd3a208d5?format=webp&w=400"
-                          alt=""
-                        />
-                      </div>
-                    </div>
-                    <div className="text-left">
-                      <h1 className="text-[14px] font-semibold">
-                        Test {index + 1}
-                      </h1>
-                      <h1 className="text-[13px] text-gray-neutral-600">
-                        1 Element
-                      </h1>
-                    </div>
-                    <p className="ml-auto">Added</p>
-                  </button>
-                </li>
-              ))}
-              <div className="flex items-center gap-4 hover:bg-gray-neutral-400 p-2 rounded-2xl transition">
-                <button className="bg-black rounded-md p-2">
-                  <Icon
-                    color="#ffffff"
-                    icon="ic:round-plus"
-                    width="24"
-                    height="24"
-                  />
-                </button>
-                <p className="text-sm font-semibold">New Cluster</p>
-              </div>
-            </ul>
-          </div>
-        </div>
+export default function Cluster() {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+
+  const { allCluster, loadMoreRef } = useQueryCluster(debouncedSearch);
+
+  return (
+    <div>
+      <div className="bg-gray-neutral-200 w-[310px] h-[400px] rounded-3xl p-4 overflow-hidden flex flex-col">
+        <ClusterHeader search={search} onSearchChange={setSearch} />
+        <ClusterList clusters={allCluster} loadMoreRef={loadMoreRef} />
+        <ClusterFooter />
       </div>
-    );
-  }
-  // https://cdn.cosmos.so/b4aa7803-c3b0-4e71-a458-2f9dd3a208d5?format=webp&w=400
-  {
-    /* <Image
+    </div>
+  );
+}
+
+// https://cdn.cosmos.so/b4aa7803-c3b0-4e71-a458-2f9dd3a208d5?format=webp&w=400
+{
+  /* <Image
                     src="https://cdn.cosmos.so/b4aa7803-c3b0-4e71-a458-2f9dd3a208d5?format=webp&w=400"
                     alt="Mô tả ảnh"
                     width={180} // Giá trị lớn nhất bạn muốn hiển thị
@@ -83,4 +44,4 @@
             60px
           `}
                   /> */
-  }
+}
