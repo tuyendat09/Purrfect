@@ -17,7 +17,7 @@ export default function Cluster() {
 
   return (
     <div>
-      <div className="bg-gray-neutral-200 w-[310px] h-[400px] rounded-3xl p-4 overflow-hidden flex flex-col">
+      <div className="bg-gray-neutral-200 w-[310px] h-[400px] rounded-3xl p-4 overflow-hidden flex flex-col ">
         <ClusterHeader search={search} onSearchChange={setSearch} />
         <ClusterList clusters={allCluster} loadMoreRef={loadMoreRef} />
         <ClusterFooter />

@@ -20,14 +20,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { getUser, logout } from "@/shared/apis/Auth";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-const Modal = lazy(() => import("@/shared/components/Modal/Modal"));
-const ModalContent = lazy(
-  () => import("@/shared/components/Modal/ModalContent")
+const CreateClusterModal = lazy(
+  () => import("../Modal/CreateClustserModal/CreateClusterModal")
 );
-const ModalBody = lazy(() => import("@/shared/components/Modal/ModalBody"));
-const ModalFooter = lazy(() => import("@/shared/components/Modal/ModalFooter"));
-const ModalHeader = lazy(() => import("@/shared/components/Modal/ModalHeader"));
 
 function UserProfilePicture({
   userProfilePicture,
@@ -51,17 +46,9 @@ function UserProfilePicture({
 
 export default function SiteLink() {
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   function handleToggleModal(): void {
     setIsOpenModal((prevState) => !prevState);
-  }
-
-  async function handleAsyncImportCreateCluster() {
-    const { handleCreateCluster } = await import("./utils/handleCreateCluster");
-    if (inputRef.current) {
-      handleCreateCluster(inputRef.current.value);
-    }
   }
 
   const { data } = useQuery({
@@ -163,39 +150,10 @@ export default function SiteLink() {
       </DropMenu>
 
       {isOpenModal && (
-        <Modal isOpen={isOpenModal} onClose={handleToggleModal} size="md">
-          <ModalContent>
-            <ModalHeader>
-              <div className="text-center font-normal">
-                <h1 className="font-serif">New Cluster</h1>
-                <p className="text-sm">A colection of elements</p>
-              </div>
-            </ModalHeader>
-            <ModalBody>
-              <NormalInput
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleAsyncImportCreateCluster();
-                  }
-                }}
-                ref={inputRef}
-                borderRadius="full"
-                placeholder="Cluster name"
-                name="cluster-name"
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                onClick={handleAsyncImportCreateCluster}
-                fullWidth
-                size="lg"
-                variant="black"
-              >
-                Create
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <CreateClusterModal
+          isOpenModal={isOpenModal}
+          handleToggleModal={handleToggleModal}
+        />
       )}
     </div>
   );

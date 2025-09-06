@@ -62,7 +62,7 @@ export function MansoryClusterButton({
   }, [setOpenCluster]);
 
   return (
-    <div ref={ref} className="z-10 absolute top-4 left-4">
+    <div ref={ref} className="z-40 absolute top-4 left-4">
       <div
         onClick={toggleOpenCluster}
         className={clsx(
