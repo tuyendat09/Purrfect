@@ -60,7 +60,6 @@ exports.handleVerifyOTP = asyncHandler(async (req, res) => {
 
 exports.handleLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  await new Promise((resolve) => setTimeout(resolve, 150));
 
   const loginData = {
     email,

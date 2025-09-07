@@ -38,7 +38,5 @@ exports.handleQueryCluster = asyncHandler(async (req, res) => {
 
   const result = await clusterServices.handleQueryCluster(queryData);
 
-  // Tìm Cluster theo User, gửi UserID đến cho Server, rồi find theo UserID,
-  // Tìm tất cả các Cluster chứa elementID đc client gửi đến.
-  return res.status(200).json(result);
+  return res.status(200).json({ success: true, result });
 });

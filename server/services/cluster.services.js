@@ -94,10 +94,10 @@ async function getCachedClusters(cacheKey) {
 }
 
 async function setCachedClusters(cacheKey, data) {
-  await redis.set(cacheKey, JSON.stringify(data), "EX", 300);
+  await redis.set(cacheKey, JSON.stringify(data), "EX", 60);
 }
 
-function buildClusterResult({ clusters, total, skip, limit, currentPage }) {
+function buildClusterResult({ clusters, total, skip, currentPage }) {
   const hasNextPage = skip + clusters.length < total;
   const nextPage = hasNextPage ? currentPage + 1 : null;
 
@@ -111,6 +111,7 @@ function buildClusterResult({ clusters, total, skip, limit, currentPage }) {
 }
 
 exports.handleQueryCluster = async ({ query, userId }) => {
+  console.log("call");
   const { filter, sort } = prepareQuery(query, userId);
   const { skip, limit, currentPage } = handlePaginateCluster(query);
 
