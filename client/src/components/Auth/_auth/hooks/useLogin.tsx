@@ -4,13 +4,6 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { ParamsLogin } from "@/shared/types/AuthAPI";
 
-interface errorsValues {
-  email: string;
-  username: string;
-  password: string;
-  confirmPassword: string;
-}
-
 export default function useLogin() {
   const router = useRouter();
 
@@ -29,7 +22,10 @@ export default function useLogin() {
     },
     onSuccess: (_data, _variables, context) => {
       toast.dismiss(context?.toastId);
-      router.push("/");
+      toast.success("You're all set!");
+      setTimeout(() => {
+        router.push("/");
+      }, 300);
     },
   });
 
@@ -42,11 +38,7 @@ export default function useLogin() {
       const promise = mutation.mutate(values);
       return promise;
     },
-    validate: (values) => {
-      const errors: Partial<errorsValues> = {};
-      console.log(values);
-      return errors;
-    },
+    validate: () => {},
   });
 
   return {
