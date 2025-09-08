@@ -3,7 +3,7 @@ const isDocumentExist = require("../utils/isDocumentExist");
 const { getCacheKey } = require("../utils/redisCache");
 const verifyEmptyData = require("../utils/verifyEmptyData");
 const redis = require("../redisClient");
-
+const User = require("../models/User");
 const isClusterExist = (clusterName) => {
   return isDocumentExist(Cluster, { clusterName: clusterName });
 };
@@ -16,9 +16,14 @@ const checkDuplicatedCluster = async (clusterName) => {
 };
 
 const createNewCluster = async ({ clusterName, userId }) => {
+  const user = await User.findById(userId);
   const cluster = new Cluster({
     clusterName: clusterName,
-    createdBy: userId,
+    createdBy: {
+      userId: user.id,
+      userPicture: user.profilePicture,
+      username: user.username,
+    },
   });
 
   await cluster.save();

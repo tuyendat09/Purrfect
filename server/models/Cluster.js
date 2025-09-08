@@ -12,7 +12,7 @@ const clustersSchema = new Schema(
     createdBy: {
       userId: { type: ObjectId, required: true },
       userPicture: { type: String, required: true },
-      userFullname: { type: String, required: true },
+      username: { type: String, required: true },
     },
     elementIds: [
       {
