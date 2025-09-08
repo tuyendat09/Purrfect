@@ -6,6 +6,7 @@ import ModalContent from "../ModalContent";
 import ModalHeader from "../ModalHeader";
 import ModalBody from "../ModalBody";
 import ModalFooter from "../ModalFooter";
+import { useCreateCluster } from "@/shared/hook/useCreateCluster";
 
 interface CreateClusterModalProps {
   isOpenModal: boolean;
@@ -18,14 +19,8 @@ export default function CreateClusterModal({
 }: CreateClusterModalProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  async function handleAsyncImportCreateCluster() {
-    const { handleCreateCluster } = await import(
-      "@/shared/utils/handleCreateCluster"
-    );
-    if (inputRef.current) {
-      handleCreateCluster(inputRef.current.value);
-    }
-  }
+  const { handleCreateCluster } = useCreateCluster();
+
   return (
     <Modal isOpen={isOpenModal} onClose={handleToggleModal} size="md">
       <ModalContent>
@@ -39,7 +34,9 @@ export default function CreateClusterModal({
           <NormalInput
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                handleAsyncImportCreateCluster();
+                if (inputRef.current) {
+                  handleCreateCluster(inputRef.current.value);
+                }
               }
             }}
             ref={inputRef}
@@ -50,7 +47,11 @@ export default function CreateClusterModal({
         </ModalBody>
         <ModalFooter>
           <Button
-            onClick={handleAsyncImportCreateCluster}
+            onClick={() => {
+              if (inputRef.current) {
+                handleCreateCluster(inputRef.current.value);
+              }
+            }}
             fullWidth
             size="lg"
             variant="black"
