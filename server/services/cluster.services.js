@@ -1,6 +1,6 @@
 const Cluster = require("../models/Cluster");
 const isDocumentExist = require("../utils/isDocumentExist");
-const { getCacheKey } = require("../utils/redisCache");
+const { getCacheKey, getOrSetCache } = require("../utils/redisCache");
 const verifyEmptyData = require("../utils/verifyEmptyData");
 const redis = require("../redisClient");
 const User = require("../models/User");
@@ -15,6 +15,24 @@ const checkDuplicatedCluster = async (clusterName) => {
   return { success: true };
 };
 
+const revalidateClusterCache = async (userId) => {
+  const cacheKey = `user:${userId}`;
+
+  const fields = await redis.hkeys(cacheKey);
+
+  // Chỉ chọn những field bắt đầu bằng "clusters:"
+  const clusterFields = fields.filter((f) => f.startsWith("clusters:"));
+
+  if (clusterFields.length > 0) {
+    await redis.hdel(cacheKey, ...clusterFields);
+    console.log(
+      `🗑️ Deleted ${clusterFields.length} cluster cache fields for ${cacheKey}`
+    );
+  } else {
+    console.log(`ℹ️ No cluster cache fields found for ${cacheKey}`);
+  }
+};
+
 const createNewCluster = async ({ clusterName, userId }) => {
   const user = await User.findById(userId);
   const cluster = new Cluster({
@@ -27,6 +45,7 @@ const createNewCluster = async ({ clusterName, userId }) => {
   });
 
   await cluster.save();
+  await revalidateClusterCache(userId);
 };
 
 exports.handleCreateCluster = async (newClusterData) => {
@@ -93,15 +112,6 @@ async function getClustersFromDB({ filter, sort, skip, limit }) {
   return { clusters, total };
 }
 
-async function getCachedClusters(cacheKey) {
-  const cachedData = await redis.get(cacheKey);
-  return cachedData ? JSON.parse(cachedData) : null;
-}
-
-async function setCachedClusters(cacheKey, data) {
-  await redis.set(cacheKey, JSON.stringify(data), "EX", 60);
-}
-
 function buildClusterResult({ clusters, total, skip, currentPage }) {
   const hasNextPage = skip + clusters.length < total;
   const nextPage = hasNextPage ? currentPage + 1 : null;
@@ -117,21 +127,39 @@ function buildClusterResult({ clusters, total, skip, currentPage }) {
 
 exports.handleQueryCluster = async ({ query, userId }) => {
   console.log("call");
+
   const { filter, sort } = prepareQuery(query, userId);
   const { skip, limit, currentPage } = handlePaginateCluster(query);
 
   const useCache = currentPage <= 10 && !query.id;
-  const cacheKey =
-    getCacheKey(filter, sort, currentPage, limit) + `:user:${userId}`;
+  const cacheField = `clusters:${getCacheKey(
+    filter,
+    sort,
+    currentPage,
+    limit
+  )}`;
 
   if (useCache) {
-    const cached = await getCachedClusters(cacheKey);
-    if (cached) {
-      console.log("📌 Clusters from cache");
-      return cached;
-    }
+    // Cache-aside pattern
+    return await getOrSetCache(userId, cacheField, async () => {
+      const { clusters, total } = await getClustersFromDB({
+        filter,
+        sort,
+        skip,
+        limit,
+      });
+
+      return buildClusterResult({
+        clusters,
+        total,
+        skip,
+        limit,
+        currentPage,
+      });
+    });
   }
 
+  // Nếu không cache → lấy trực tiếp từ DB
   const { clusters, total } = await getClustersFromDB({
     filter,
     sort,
@@ -139,18 +167,11 @@ exports.handleQueryCluster = async ({ query, userId }) => {
     limit,
   });
 
-  const result = buildClusterResult({
+  return buildClusterResult({
     clusters,
     total,
     skip,
     limit,
     currentPage,
   });
-
-  if (useCache) {
-    await setCachedClusters(cacheKey, result);
-    console.log("📌 Clusters cached in Redis");
-  }
-
-  return result;
 };

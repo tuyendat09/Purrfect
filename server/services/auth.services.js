@@ -12,6 +12,7 @@ const {
 const verifyEmptyData = require("../utils/verifyEmptyData");
 const { verifyRefreshToken } = require("../utils/verifyJWT");
 const redis = require("../redisClient");
+const { getOrSetCache } = require("../utils/redisCache");
 
 const isUserExist = (email) => {
   return isDocumentExist(User, { email: email });
@@ -240,16 +241,21 @@ const validateUserNameChange = async (userId, username) => {
 };
 
 const revalidateCache = async (userId) => {
-  const cacheKey = `user:${userId}`;
+  const cacheField = "info"; // field riêng cho user info
 
-  const user = await prepareUser(userId);
-  if (user?.success === false) {
-    return user;
-  }
-  const publicUser = getPublicUser(user);
-
-  await redis.set(cacheKey, JSON.stringify(publicUser), "EX", 300);
+  await getOrSetCache(
+    userId,
+    cacheField,
+    async () => {
+      const user = await prepareUser(userId);
+      if (!user || user.success === false) return null;
+      return getPublicUser(user);
+    },
+    300,
+    true
+  );
 };
+
 exports.handleChangeUserName = async (userId, username) => {
   const { success, code, user } = await validateUserNameChange(
     userId,
@@ -274,25 +280,19 @@ const prepareUser = async (userId) => {
 };
 
 exports.handleGetUser = async (userId) => {
-  const cacheKey = `user:${userId}`;
+  const cacheField = "info";
 
-  const cached = await redis.get(cacheKey);
-  if (cached) {
-    const parsed = JSON.parse(cached);
-    console.log("data from cached");
-    return { success: true, user: parsed };
+  const user = await getOrSetCache(userId, cacheField, async () => {
+    const data = await prepareUser(userId);
+
+    if (!data || data?.success === false) return null;
+
+    return getPublicUser(data);
+  });
+
+  if (!user) {
+    return { success: false };
   }
 
-  const user = await prepareUser(userId);
-
-  if (user?.success === false) {
-    return user;
-  }
-
-  const publicUser = getPublicUser(user);
-
-  await redis.set(cacheKey, JSON.stringify(publicUser), "EX", 300);
-  console.log("data cache in redis");
-
-  return { success: true, user: publicUser };
+  return { success: true, user };
 };

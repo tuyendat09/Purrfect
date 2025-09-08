@@ -3,7 +3,7 @@ const ElementLike = require("../models/ElementLike");
 const { getEmbedCLIP } = require("../utils/getEmbedCLIP");
 const { uploadFileToS3 } = require("../utils/uploadToAWS");
 const redis = require("../redisClient");
-const { getCacheKey } = require("../utils/redisCache");
+const { getCacheKey, getOrSetCache } = require("../utils/redisCache");
 
 async function processEmbedding(file) {
   return await getEmbedCLIP(file);
@@ -85,16 +85,24 @@ async function queryElement({ filter, sort, skip, limit }) {
   return await Element.find(filter).sort(sort).skip(skip).limit(limit);
 }
 
-async function clearUserElementCache(userId) {
-  const stream = redis.scanStream({
-    match: `elements:*:user:${userId}`,
-  });
-  stream.on("data", (keys) => {
-    if (keys.length) {
-      redis.del(...keys);
-    }
-  });
-}
+const clearUserElementCache = async (userId) => {
+  const cacheKey = `user:${userId}`;
+
+  // Lấy tất cả field trong hash user
+  const fields = await redis.hkeys(cacheKey);
+
+  // Chỉ chọn những field bắt đầu bằng "clusters:"
+  const clusterFields = fields.filter((f) => f.startsWith("elements:"));
+
+  if (clusterFields.length > 0) {
+    await redis.hdel(cacheKey, ...clusterFields);
+    console.log(
+      `🗑️ Deleted ${clusterFields.length} cluster cache fields for ${cacheKey}`
+    );
+  } else {
+    console.log(`ℹ️ No cluster cache fields found for ${cacheKey}`);
+  }
+};
 
 exports.handleQueryElement = async (queryData) => {
   const { query, userId } = queryData;
@@ -102,18 +110,45 @@ exports.handleQueryElement = async (queryData) => {
   const { skip, limit, currentPage } = handlePaginateElement(query);
 
   const useCache = currentPage <= 10 && !query.id;
-  const cacheKey =
-    getCacheKey(filter, sort, currentPage, limit) + `:user:${userId}`;
+
+  const cacheField = `elements:${getCacheKey(
+    filter,
+    sort,
+    currentPage,
+    limit
+  )}`;
 
   if (useCache) {
-    const cachedData = await redis.get(cacheKey);
-    if (cachedData) {
-      console.log("📌 Data from cache");
-      return JSON.parse(cachedData);
-    }
+    return await getOrSetCache(userId, cacheField, async () => {
+      return await fetchElementsFromDB(
+        filter,
+        sort,
+        skip,
+        limit,
+        userId,
+        currentPage
+      );
+    });
   }
 
-  // Lấy dữ liệu từ DB
+  return await fetchElementsFromDB(
+    filter,
+    sort,
+    skip,
+    limit,
+    userId,
+    currentPage
+  );
+};
+
+async function fetchElementsFromDB(
+  filter,
+  sort,
+  skip,
+  limit,
+  userId,
+  currentPage
+) {
   const [elements, total, likedDocs] = await Promise.all([
     queryElement({ filter, sort, skip, limit }),
     Element.countDocuments(filter),
@@ -129,7 +164,7 @@ exports.handleQueryElement = async (queryData) => {
   const hasNextPage = skip + elements.length < total;
   const nextPage = hasNextPage ? currentPage + 1 : null;
 
-  const result = {
+  return {
     success: true,
     elements: elementsWithLike,
     total,
@@ -137,15 +172,7 @@ exports.handleQueryElement = async (queryData) => {
     nextPage,
     hasNextPage,
   };
-
-  // Lưu cache
-  if (useCache) {
-    await redis.set(cacheKey, JSON.stringify(result), "EX", 300);
-    console.log("📌 Data cached in Redis");
-  }
-
-  return result;
-};
+}
 
 async function handleCheckDuplicated({ userId, elementId }) {
   return await ElementLike.findOne({ userId, elementId });
