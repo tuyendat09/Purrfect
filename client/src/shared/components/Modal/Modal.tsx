@@ -29,25 +29,23 @@ export default function Modal({
 
   useEffect(() => {
     setMounted(true);
-    document.body.style.overflowY = "hidden";
 
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handleEsc);
-    return () => {
-      document.body.style.overflowY = "auto";
-      window.removeEventListener("keydown", handleEsc);
-    };
+    return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
   if (!mounted) return null;
+
+  console.log("Modal render");
 
   return createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-40 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

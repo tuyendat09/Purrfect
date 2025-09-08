@@ -4,7 +4,7 @@ import ClusterItem from "./ClusterItem";
 
 interface ClusterListProps {
   clusters: Cluster[];
-  loadMoreRef?: any;
+  loadMoreRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 const ClusterList = memo(({ clusters, loadMoreRef }: ClusterListProps) => {
@@ -19,5 +19,7 @@ const ClusterList = memo(({ clusters, loadMoreRef }: ClusterListProps) => {
     </div>
   );
 });
+
+ClusterList.displayName = "ClusterList";
 
 export default ClusterList;

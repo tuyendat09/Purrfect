@@ -3,7 +3,12 @@ import useLikeElement from "./hook/useLikeElement";
 import { lazy, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { clsx } from "clsx";
+import useToggle from "@/shared/hook/useToggle";
 const Cluster = lazy(() => import("@/shared/components/Cluster/Cluster"));
+const CreateClusterModal = lazy(
+  () =>
+    import("@/shared/components/Modal/CreateClustserModal/CreateClusterModal")
+);
 
 interface MasonryButtonProps {
   elementId: string;
@@ -42,6 +47,7 @@ export function MansoryClusterButton({
   setOpenCluster,
 }: MansoryClusterButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const { toggle, handleToggle } = useToggle();
 
   function toggleOpenCluster(e: React.MouseEvent) {
     e.stopPropagation(); // Ngăn lan click
@@ -85,7 +91,13 @@ export function MansoryClusterButton({
           openCluster ? "block" : "hidden"
         )}
       >
-        {openCluster && <Cluster />}
+        {openCluster && <Cluster onClick={handleToggle} />}
+        {toggle && (
+          <CreateClusterModal
+            isOpenModal={toggle}
+            handleToggleModal={handleToggle}
+          />
+        )}
       </div>
     </div>
   );

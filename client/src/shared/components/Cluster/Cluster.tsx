@@ -1,7 +1,3 @@
-"use client";
-
-import Image from "next/image";
-import NormalInput from "../Input/NormalInput";
 import useQueryCluster from "./hook/useQueryCluster";
 import ClusterList from "./ClusterList";
 import ClusterFooter from "./ClusterFooter";
@@ -9,7 +5,11 @@ import { useState } from "react";
 import useDebounce from "@/shared/hook/useDebouce";
 import ClusterHeader from "./ClusterHeader";
 
-export default function Cluster() {
+interface ClusterProps {
+  onClick?: () => void;
+}
+
+export default function Cluster({ onClick }: ClusterProps) {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
 
@@ -20,7 +20,7 @@ export default function Cluster() {
       <div className="bg-gray-neutral-200 w-[310px] h-[400px] rounded-3xl p-4 overflow-hidden flex flex-col ">
         <ClusterHeader search={search} onSearchChange={setSearch} />
         <ClusterList clusters={allCluster} loadMoreRef={loadMoreRef} />
-        <ClusterFooter />
+        <ClusterFooter onClick={onClick} />
       </div>
     </div>
   );
