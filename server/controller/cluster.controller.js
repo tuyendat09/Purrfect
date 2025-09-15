@@ -40,3 +40,34 @@ exports.handleQueryCluster = asyncHandler(async (req, res) => {
 
   return res.status(200).json({ success: true, result });
 });
+
+exports.handleAddToCluster = asyncHandler(async (req, res) => {
+  const { elementId, clusterId } = req.body;
+  const id = req.user.id;
+
+  const addToClusterData = {
+    elementId,
+    clusterId,
+    userId: id,
+  };
+
+  const { success, code } = await clusterServices.handleAddElementToCluster(
+    addToClusterData
+  );
+
+  if (!success) {
+    let message = "Something wrong :(";
+    switch (code) {
+      case "ELEMENT_EXIST":
+        message = "Looks like this element in there.";
+        break;
+      case "CLUSTER_NOT_EXIST":
+        message = "Looks like this cluster not exist!";
+        break;
+    }
+    return res.status(400).json({ success: false, message });
+  }
+  return res
+    .status(200)
+    .json({ success: true, message: "Boom! element added." });
+});

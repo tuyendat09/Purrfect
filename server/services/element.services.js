@@ -1,16 +1,16 @@
 const Element = require("../models/Element");
 const ElementLike = require("../models/ElementLike");
 const { getEmbedCLIP } = require("../utils/getEmbedCLIP");
-const { uploadFileToS3 } = require("../utils/uploadToAWS");
 const redis = require("../redisClient");
 const { getCacheKey, getOrSetCache } = require("../utils/redisCache");
+const { uploadFileToDrive } = require("../utils/uploadToDrive");
 
 async function processEmbedding(file) {
   return await getEmbedCLIP(file);
 }
 
 async function handleUpload(file) {
-  return await uploadFileToS3(file);
+  return await uploadFileToDrive(file);
 }
 
 async function saveElement({
@@ -40,7 +40,7 @@ exports.handleCreateNewElement = async (uploadData) => {
   const newElementData = { originalUrl, previewUrl, userId, embedding, tags };
 
   await saveElement(newElementData);
-
+  clearUserElementCache(userId);
   return { success: true };
 };
 
@@ -88,10 +88,8 @@ async function queryElement({ filter, sort, skip, limit }) {
 const clearUserElementCache = async (userId) => {
   const cacheKey = `user:${userId}`;
 
-  // Lấy tất cả field trong hash user
   const fields = await redis.hkeys(cacheKey);
 
-  // Chỉ chọn những field bắt đầu bằng "clusters:"
   const clusterFields = fields.filter((f) => f.startsWith("elements:"));
 
   if (clusterFields.length > 0) {

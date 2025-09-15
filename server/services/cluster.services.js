@@ -4,6 +4,7 @@ const { getCacheKey, getOrSetCache } = require("../utils/redisCache");
 const verifyEmptyData = require("../utils/verifyEmptyData");
 const redis = require("../redisClient");
 const User = require("../models/User");
+
 const isClusterExist = (clusterName) => {
   return isDocumentExist(Cluster, { clusterName: clusterName });
 };
@@ -68,7 +69,6 @@ function prepareQuery(params = {}, userId) {
   const sort = { createdAt: -1 }; // mặc định sắp xếp mới nhất
 
   if (name) {
-    // tìm clusterName chứa keyword
     filter.clusterName = { $regex: name, $options: "i" };
   }
 
@@ -126,8 +126,6 @@ function buildClusterResult({ clusters, total, skip, currentPage }) {
 }
 
 exports.handleQueryCluster = async ({ query, userId }) => {
-  console.log("call");
-
   const { filter, sort } = prepareQuery(query, userId);
   const { skip, limit, currentPage } = handlePaginateCluster(query);
 
@@ -140,7 +138,6 @@ exports.handleQueryCluster = async ({ query, userId }) => {
   )}`;
 
   if (useCache) {
-    // Cache-aside pattern
     return await getOrSetCache(userId, cacheField, async () => {
       const { clusters, total } = await getClustersFromDB({
         filter,
@@ -174,4 +171,43 @@ exports.handleQueryCluster = async ({ query, userId }) => {
     limit,
     currentPage,
   });
+};
+
+async function validateAddElementToCluster({ elementId, clusterId }) {
+  const cluster = await Cluster.findById(clusterId);
+
+  if (!cluster) {
+    return { success: false, code: "CLUSTER_NOT_EXIST" };
+  }
+
+  const alreadyExists = cluster.elementIds.some((id) => id.equals(elementId));
+
+  if (alreadyExists) {
+    return {
+      success: false,
+      code: "ELEMENT_EXIST",
+    };
+  }
+  return { success: true, cluster: cluster };
+}
+
+async function addElementToCluster(cluster, elementId) {
+  cluster.elementIds.push(elementId);
+  await cluster.save();
+}
+
+exports.handleAddElementToCluster = async ({
+  elementId,
+  clusterId,
+  userId,
+}) => {
+  const validateData = await validateAddElementToCluster({
+    elementId,
+    clusterId,
+  });
+  if (!validateData.success) return validateData;
+  await addElementToCluster(validateData.cluster, elementId);
+  console.log(userId);
+  await revalidateClusterCache(userId);
+  return { success: true };
 };
