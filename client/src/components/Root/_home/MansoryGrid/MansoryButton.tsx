@@ -38,11 +38,13 @@ export function MansoryLikeButton({
 }
 
 interface MansoryClusterButtonProps {
+  elementId: string;
   openCluster: boolean;
   setOpenCluster: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function MansoryClusterButton({
+  elementId,
   openCluster,
   setOpenCluster,
 }: MansoryClusterButtonProps) {
@@ -91,7 +93,9 @@ export function MansoryClusterButton({
           openCluster ? "block" : "hidden"
         )}
       >
-        {openCluster && <Cluster onClick={handleToggle} />}
+        {openCluster && (
+          <Cluster elementId={elementId} onClick={handleToggle} />
+        )}
         {toggle && (
           <CreateClusterModal
             isOpenModal={toggle}

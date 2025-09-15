@@ -1,15 +1,20 @@
 import { Cluster } from "@/shared/types/Cluster";
-import { memo } from "react";
+import useAddElement from "./hook/useAddElement";
 
 interface ClusterItemProps {
   cluster: Cluster;
-  index: number;
+  elementId: string;
 }
 
-const ClusterItem = ({ cluster }: ClusterItemProps) => {
+const ClusterItem = ({ cluster, elementId }: ClusterItemProps) => {
+  const { handleAddElement } = useAddElement();
+
   return (
     <li className="hover:bg-gray-neutral-400 p-2 rounded-2xl transition">
-      <button className="flex items-center w-full">
+      <button
+        onClick={() => handleAddElement(elementId, cluster._id)}
+        className="flex items-center w-full"
+      >
         <div className="size-10 mr-4">
           <div className="bg-red-500 w-full h-full rounded-xl overflow-hidden">
             <img
@@ -25,7 +30,9 @@ const ClusterItem = ({ cluster }: ClusterItemProps) => {
             {cluster.elementIds.length} Element
           </h1>
         </div>
-        <p className="ml-auto">Added</p>
+        <p className="ml-auto">
+          {cluster.elementIds.includes(elementId) ? "Added" : "Add"}
+        </p>
       </button>
     </li>
   );

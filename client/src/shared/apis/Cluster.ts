@@ -1,5 +1,6 @@
 import {
   GetClusterQueryResponse,
+  ParamsAddToCluster,
   ParamsCreateCluster,
   ParamsQueryCluster,
 } from "./../types/Cluster";
@@ -31,5 +32,17 @@ export const handleQueryClutser = async (
       .setMethod("GET")
       .setQuery(query)
       .send<GetClusterQueryResponse>()
+  );
+};
+
+export const handleAddElementToCluster = async (
+  data: ParamsAddToCluster
+): Promise<APIResponseType> => {
+  return withAuthRetry(() =>
+    createRequest(DOMAIN_API)
+      .setPath("/api/cluster/add-to-cluster")
+      .setMethod("POST")
+      .setBody(data)
+      .send<APIResponseType>()
   );
 };

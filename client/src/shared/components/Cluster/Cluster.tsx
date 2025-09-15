@@ -7,9 +7,10 @@ import ClusterHeader from "./ClusterHeader";
 
 interface ClusterProps {
   onClick?: () => void;
+  elementId?: string;
 }
 
-export default function Cluster({ onClick }: ClusterProps) {
+export default function Cluster({ onClick, elementId }: ClusterProps) {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
 
@@ -19,7 +20,11 @@ export default function Cluster({ onClick }: ClusterProps) {
     <div>
       <div className="bg-gray-neutral-200 w-[310px] h-[400px] rounded-3xl p-4 overflow-hidden flex flex-col ">
         <ClusterHeader search={search} onSearchChange={setSearch} />
-        <ClusterList clusters={allCluster} loadMoreRef={loadMoreRef} />
+        <ClusterList
+          elementId={elementId}
+          clusters={allCluster}
+          loadMoreRef={loadMoreRef}
+        />
         <ClusterFooter onClick={onClick} />
       </div>
     </div>

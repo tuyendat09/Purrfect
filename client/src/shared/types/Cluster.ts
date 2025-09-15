@@ -13,6 +13,11 @@ export interface ParamsQueryCluster {
   userFullname?: string;
 }
 
+export interface ParamsAddToCluster {
+  elementId: string;
+  clusterId: string;
+}
+
 export interface GetClusterQueryResponse {
   success: boolean;
   result: {
