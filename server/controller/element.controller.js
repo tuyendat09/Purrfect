@@ -69,3 +69,18 @@ exports.handleLikeElement = asyncHandler(async (req, res) => {
     message: "Something wrong :(",
   });
 });
+
+exports.handleQueryClusterElements = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { clusterId } = req.query;
+
+  const queryData = { userId, clusterId };
+  const { success, elements, hasNextPage, total } =
+    await elementServices.handleQueryClusterElements(queryData);
+  return res.status(200).json({
+    success: true,
+    element: elements,
+    hasNextPage: hasNextPage,
+    total: total,
+  });
+});

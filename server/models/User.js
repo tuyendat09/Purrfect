@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
 
 const userSchema = new Schema(
   {
@@ -31,7 +30,7 @@ const userSchema = new Schema(
 
     profilePicture: {
       type: String,
-      default: "default-user.jpg",
+      default: null,
     },
 
     userRole: {

@@ -4,6 +4,7 @@ const { getEmbedCLIP } = require("../utils/getEmbedCLIP");
 const redis = require("../redisClient");
 const { getCacheKey, getOrSetCache } = require("../utils/redisCache");
 const { uploadFileToDrive } = require("../utils/uploadToDrive");
+const Cluster = require("../models/Cluster");
 
 async function processEmbedding(file) {
   return await getEmbedCLIP(file);
@@ -200,3 +201,115 @@ exports.handleLikeElement = async (likeElementData) => {
     return { success: true, code: "UNLIKED_ELEMENT" };
   }
 };
+
+function prepareClusterElementQuery(cluster, { page = 1, limit = 25 }) {
+  const skip = (page - 1) * limit;
+
+  return {
+    elementIds: cluster.elementIds,
+    skip,
+    limit,
+    currentPage: page,
+  };
+}
+
+async function queryClusterElementsPage(elementIds, { skip, limit }) {
+  const pageElementIds = elementIds.slice(skip, skip + limit);
+
+  const elements = await Element.find({ _id: { $in: pageElementIds } })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return { elements, pageElementIds };
+}
+
+async function queryUserLikes(userId, elementIds) {
+  const likedDocs = await ElementLike.find({
+    userId: userId,
+    elementId: { $in: elementIds },
+  })
+    .select("elementId")
+    .lean();
+
+  return new Set(likedDocs.map((d) => d.elementId.toString()));
+}
+
+function mapElementsWithLike(elements, likedIds) {
+  return elements.map((e) => ({
+    ...e,
+    isLiked: likedIds.has(e._id.toString()),
+  }));
+}
+
+async function fetchClusterElementsFromDB(clusterId, userId, page, limit) {
+  const cluster = await Cluster.findById(clusterId).select("elementIds").lean();
+  if (!cluster) throw new Error("Cluster not found");
+
+  const total = cluster.elementIds.length;
+  const { elementIds, skip, currentPage } = prepareClusterElementQuery(
+    cluster,
+    { page, limit }
+  );
+
+  const { elements, pageElementIds } = await queryClusterElementsPage(
+    elementIds,
+    { skip, limit }
+  );
+  const likedIds = await queryUserLikes(userId, pageElementIds);
+
+  const elementsWithLike = mapElementsWithLike(elements, likedIds);
+
+  const hasNextPage = skip + elements.length < total;
+  const nextPage = hasNextPage ? currentPage + 1 : null;
+
+  return {
+    success: true,
+    elements: elementsWithLike,
+    total,
+    currentPage,
+    nextPage,
+    hasNextPage,
+  };
+}
+
+exports.handleQueryClusterElements = async ({
+  clusterId,
+  userId,
+  page = 1,
+  limit = 25,
+}) => {
+  console.log(clusterId);
+  return await fetchClusterElementsFromDB(clusterId, userId, page, limit);
+};
+
+
+// router.get("/user/:userId/followed-elements", async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+
+//     // 1. Lấy danh sách clusterId (albumId) mà user follow
+//     const followedClusters = await AlbumFollow.find({ userId }).select("albumId");
+//     const clusterIds = followedClusters.map(f => f.albumId);
+
+//     if (clusterIds.length === 0) {
+//       return res.json([]); // Trả về mảng rỗng nếu user không follow cluster nào
+//     }
+
+//     // 2. Lấy tất cả elementIds từ những cluster đó
+//     const clusters = await Clusters.find({ _id: { $in: clusterIds } }).select("elementIds");
+//     const allElementIds = clusters.flatMap(c => c.elementIds);
+
+//     if (allElementIds.length === 0) {
+//       return res.json([]);
+//     }
+
+//     // 3. Lấy tất cả Element từ những elementIds đó
+//     const elements = await Element.find({ _id: { $in: allElementIds } });
+
+//     res.json(elements);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+

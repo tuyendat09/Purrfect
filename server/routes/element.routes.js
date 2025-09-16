@@ -13,5 +13,6 @@ router.post(
 
 router.get("/", elementController.handleQueryElement);
 router.post("/like", elementController.handleLikeElement);
+router.get("/cluster-id", elementController.handleQueryClusterElements);
 
 module.exports = router;
