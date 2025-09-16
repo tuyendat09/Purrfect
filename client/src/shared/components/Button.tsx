@@ -3,7 +3,7 @@ import { clsx } from "clsx";
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   className?: string;
-  variant?: "primary" | "secondary" | "success" | "danger" | "black";
+  variant?: "primary" | "secondary" | "success" | "danger" | "black" | "gray";
   size?: "sm" | "md" | "lg";
   ref?: React.RefObject<HTMLButtonElement | null>;
   isDisable?: boolean;
@@ -15,6 +15,7 @@ const variantClasses: Record<
   { base: string; hover: string }
 > = {
   primary: { base: "bg-white text-black", hover: "hover:bg-[#cfcfd0]" },
+  gray: { base: "bg-[#e8e7e5] text-black", hover: "hover:bg-[#edecea]" },
   secondary: {
     base: "bg-gray-neutral-200 text-black",
     hover: "hover:bg-gray-neutral-400",

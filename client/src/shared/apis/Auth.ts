@@ -10,7 +10,7 @@ import {
 } from "../types/AuthAPI";
 
 import { createRequest } from "../utils/httpRequestBuilder";
-import { PublicUser } from "../types/User";
+import { GetUserResponse } from "../types/User";
 import { withAuthRetry } from "../utils/withAuthRetry";
 
 export const login = async (data: ParamsLogin): Promise<LoginResponse> => {
@@ -74,7 +74,7 @@ export const verifyOTP = async (
   }
 };
 
-export const getUser = async (): Promise<PublicUser> => {
+export const getUser = async (): Promise<GetUserResponse> => {
   return withAuthRetry(() =>
     createRequest(DOMAIN_API)
       .setPath("/api/auth/")
@@ -84,7 +84,7 @@ export const getUser = async (): Promise<PublicUser> => {
         Accept: "application/json",
       })
       .setBody(null)
-      .send<PublicUser>()
+      .send<GetUserResponse>()
   );
 };
 

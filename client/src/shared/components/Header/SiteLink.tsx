@@ -10,7 +10,7 @@ import {
   DropDown,
 } from "@/shared/components/DropMenu";
 
-import UserDefaultPicture from "@@/images/default-user.jpg";
+import UserDefaultPicture from "@@/images/default-user.webp";
 
 import FlagElement from "../Icon/FlagIcon";
 import { ChevronDown, NewCluster, NewImage } from "../Icon";
@@ -30,13 +30,13 @@ function UserProfilePicture({
 }: {
   userProfilePicture?: string;
 }) {
-  const profilePicture = userProfilePicture || "/images/default-user.jpg"; // Dùng đường dẫn trực tiếp
+  const profilePicture = userProfilePicture || UserDefaultPicture;
 
   return (
     <div>
       <Image
         className="size-6 rounded-full"
-        src={UserDefaultPicture}
+        src={profilePicture}
         width={100}
         height={100}
         alt="nenene"
@@ -121,9 +121,9 @@ export default function SiteLink() {
         </div>
       </Link>
 
-      <Link href="/profile">
+      <Link href={data?.user.username || ""}>
         <div className="hover:bg-gray-neutral-300  p-2 rounded-full">
-          <UserProfilePicture userProfilePicture={data?.profilePicture} />
+          <UserProfilePicture userProfilePicture={data?.user.profilePicture} />
         </div>
       </Link>
 

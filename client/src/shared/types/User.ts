@@ -1,7 +1,13 @@
 export interface PublicUser {
   id: string;
   email: string;
-  displayName: string;
+  userFullname: string;
+  username: string;
   profilePicture: string;
   role: string;
+}
+
+export interface GetUserResponse {
+  success: true;
+  user: PublicUser;
 }
