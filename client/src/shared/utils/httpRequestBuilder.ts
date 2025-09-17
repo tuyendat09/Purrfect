@@ -10,7 +10,7 @@ export const createRequest = <
 ) => {
   let method: Method = "GET";
   let headers: Headers = {};
-  let body: B | null = null;
+  let body: B | any = null;
   let path = "";
   let query: Q = {} as Q;
 

@@ -1,9 +1,10 @@
 import { Cluster } from "@/shared/types/Cluster";
 import useAddElement from "./hook/useAddElement";
+import Image from "next/image";
 
 interface ClusterItemProps {
   cluster: Cluster;
-  elementId: string;
+  elementId?: string;
 }
 
 const ClusterItem = ({ cluster, elementId }: ClusterItemProps) => {
@@ -17,7 +18,7 @@ const ClusterItem = ({ cluster, elementId }: ClusterItemProps) => {
       >
         <div className="size-10 mr-4">
           <div className="bg-red-500 w-full h-full rounded-xl overflow-hidden">
-            <img
+            <Image
               className="w-full h-full object-cover"
               src={cluster.createdBy.userPicture}
               alt={cluster.createdBy.userFullname}
@@ -31,7 +32,7 @@ const ClusterItem = ({ cluster, elementId }: ClusterItemProps) => {
           </h1>
         </div>
         <p className="ml-auto">
-          {cluster.elementIds.includes(elementId) ? "Added" : "Add"}
+          {cluster.elementIds.includes(elementId || "") ? "Added" : "Add"}
         </p>
       </button>
     </li>

@@ -8,10 +8,10 @@ export default function useLikeElement() {
       return handleLikeElement(elementId);
     },
 
-    onError(error, _variables) {
+    onError(error) {
       toast.error(error.message);
     },
-    onSuccess: (_data, _variables) => {
+    onSuccess: (_data) => {
       toast.success(_data.message);
     },
   });

@@ -5,7 +5,7 @@ import FormHeader from "@/shared/components/Form/FormHeader";
 import useClaimUsername from "./hook/useClaimUsername";
 
 export default function ClaimUsernameForm() {
-  const { username, handleInputChange, handleChangeUsername, isPending } =
+  const { username, handleInputChange, handleChangeUsername } =
     useClaimUsername();
 
   return (

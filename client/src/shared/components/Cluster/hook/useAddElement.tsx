@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ParamsAddToCluster } from "@/shared/types/Cluster";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
@@ -27,7 +28,7 @@ export default function useAddElement() {
     },
   });
 
-  function handleAddElement(elementId: string, clusterId: string) {
+  function handleAddElement(elementId: any, clusterId: string) {
     const data = { elementId: elementId, clusterId: clusterId };
     return mutation.mutate(data);
   }

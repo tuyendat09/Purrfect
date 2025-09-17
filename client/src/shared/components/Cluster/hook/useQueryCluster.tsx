@@ -29,7 +29,7 @@ export default function useQueryCluster(search: string) {
     if (isInView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [isInView, hasNextPage, isFetchingNextPage]);
+  }, [isInView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const allCluster =
     query.data?.pages.flatMap((page) => page.result.clusters) ?? [];

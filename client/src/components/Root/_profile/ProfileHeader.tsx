@@ -15,7 +15,7 @@ function UserProfilePicture({
   const profilePicture = userProfilePicture || UserDefaultPicture;
 
   return (
-    <div className="mt-8">
+    <div className="mt-14">
       <Image
         className="w-[90px] h-[90px] rounded-full"
         src={profilePicture}
@@ -31,12 +31,12 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
     <div>
       <div className="flex flex-col items-center">
         <UserProfilePicture userProfilePicture={user?.profilePicture} />
-        <div className="my-3 text-center">
+        <div className="mt-5 text-center">
           <h1 className="text-2xl font-serif">{user?.userFullname}</h1>
-          <div className="text-sm text-gray-neutral-600 flex gap-2 items-center font-semibold ">
+          <div className="text-sm text-gray-neutral-600 flex gap-2 items-center font-semibold mt-2 mb-5 ">
             <p>@{user?.username}</p>
             <div className="size-1 bg-gray-neutral-600 rounded-full"></div>
-            <p>00 Following</p>
+            <p className="hover:underline cursor-pointer">00 Following</p>
           </div>
         </div>
         <Button variant="gray" size="md">

@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import ProfileHeader from "./ProfileHeader";
+import ProfileCluster from "./ProfileCluster";
 
 export default function Profile() {
   const { data } = useQuery({
@@ -15,6 +16,7 @@ export default function Profile() {
   return (
     <>
       <ProfileHeader user={data?.user} />
+      <ProfileCluster />
     </>
   );
 }

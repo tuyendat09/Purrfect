@@ -5,7 +5,7 @@ import ClusterItem from "./ClusterItem";
 interface ClusterListProps {
   clusters: Cluster[];
   loadMoreRef?: React.RefObject<HTMLDivElement | null>;
-  elementId: string;
+  elementId?: string;
 }
 
 const ClusterList = memo(

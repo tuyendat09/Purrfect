@@ -97,7 +97,7 @@ export default function OnboardingFormStep3() {
         handleTransition("/claim-username");
       });
     }
-  }, [step]);
+  }, [handleTransition, step]);
 
   if (step !== 3) return null;
 
