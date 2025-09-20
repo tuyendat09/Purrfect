@@ -3,7 +3,7 @@ export interface ParamsCreateCluster {
 }
 
 export interface ParamsQueryCluster {
-  page?: number;
+  page?: number | undefined;
   limit?: number;
   elementId?: string;
   name?: string;
@@ -11,6 +11,7 @@ export interface ParamsQueryCluster {
   id?: string;
   exceptId?: string;
   userFullname?: string;
+  otherUserId?: string;
 }
 
 export interface ParamsAddToCluster {

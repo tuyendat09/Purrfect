@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { useInView } from "framer-motion";
 import { handleGetElement } from "@/shared/apis/Element";
 import { GetElementQuery } from "@/shared/types/ElementAPI";
+import useDebounce from "@/shared/hook/useDebouce";
 
 export function useInfiniteElements(
   extraQuery?: Omit<GetElementQuery, "page" | "limit">
@@ -26,11 +27,13 @@ export function useInfiniteElements(
 
   const { fetchNextPage, hasNextPage, isFetchingNextPage } = query;
 
+  const debouncedInView = useDebounce(isInView, 300);
+
   useEffect(() => {
-    if (isInView && hasNextPage && !isFetchingNextPage) {
+    if (debouncedInView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [isInView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [debouncedInView, hasNextPage, isFetchingNextPage]);
 
   const allImages = query.data?.pages.flatMap((page) => page.element) ?? [];
 

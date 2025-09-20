@@ -83,7 +83,22 @@ export const getUser = async (): Promise<GetUserResponse> => {
         "Content-Type": "application/json",
         Accept: "application/json",
       })
-      .setBody(null)
+      .send<GetUserResponse>()
+  );
+};
+
+export const getUserByUsername = async (username: {
+  username: string;
+}): Promise<GetUserResponse> => {
+  return withAuthRetry(() =>
+    createRequest(DOMAIN_API)
+      .setPath("/api/auth/by-username")
+      .setMethod("GET")
+      .setHeaders({
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      })
+      .setQuery(username)
       .send<GetUserResponse>()
   );
 };

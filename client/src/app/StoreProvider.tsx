@@ -1,12 +1,10 @@
 "use client";
 
-import Header from "@/shared/components/Header/Header";
 import {
   isServer,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { usePathname } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 
 function makeQueryClient() {
@@ -42,15 +40,7 @@ interface Props {
 }
 
 export default function StoreProvider({ children }: Props) {
-  const pathname = usePathname();
-
   const queryClient = getQueryClient();
-  const shouldRenderHeader = ![
-    "auth",
-    "element",
-    "onboarding",
-    "claim-username",
-  ].some((segment) => pathname.includes(segment));
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -66,7 +56,6 @@ export default function StoreProvider({ children }: Props) {
        `,
         }}
       />
-      {shouldRenderHeader && <Header />}
       {children}
     </QueryClientProvider>
   );

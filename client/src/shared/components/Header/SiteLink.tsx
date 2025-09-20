@@ -10,40 +10,18 @@ import {
   DropDown,
 } from "@/shared/components/DropMenu";
 
-import UserDefaultPicture from "@@/images/default-user.webp";
-
 import FlagElement from "../Icon/FlagIcon";
 import { ChevronDown, NewCluster, NewImage } from "../Icon";
 import { lazy } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getUser, logout } from "@/shared/apis/Auth";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useToggle from "@/shared/hook/useToggle";
+import UserProfilePicture from "../User/UserProfilePicutre";
 
 const CreateClusterModal = lazy(
   () => import("../Modal/CreateClustserModal/CreateClusterModal")
 );
-
-function UserProfilePicture({
-  userProfilePicture,
-}: {
-  userProfilePicture?: string;
-}) {
-  const profilePicture = userProfilePicture || UserDefaultPicture;
-
-  return (
-    <div>
-      <Image
-        className="size-6 rounded-full"
-        src={profilePicture}
-        width={100}
-        height={100}
-        alt="nenene"
-      />
-    </div>
-  );
-}
 
 export default function SiteLink() {
   const { toggle, handleToggle } = useToggle();
@@ -123,7 +101,9 @@ export default function SiteLink() {
 
       <Link href={data?.user.username || ""}>
         <div className="hover:bg-gray-neutral-300  p-2 rounded-full">
-          <UserProfilePicture userProfilePicture={data?.user.profilePicture} />
+          <UserProfilePicture
+            userProfilePicture={data && data?.user.profilePicture}
+          />
         </div>
       </Link>
 

@@ -14,13 +14,13 @@ const DOMAIN_API = process.env.NEXT_PUBLIC_DOMAIN_API;
 export const createCluster = async (
   data: ParamsCreateCluster
 ): Promise<APIResponseType> => {
-  return withAuthRetry(() =>
-    createRequest(DOMAIN_API)
-      .setPath("/api/cluster/create")
-      .setMethod("POST")
-      .setBody(data)
-      .send<APIResponseType>()
-  );
+  const response = await createRequest(DOMAIN_API)
+    .setPath("/api/cluster/create")
+    .setMethod("POST")
+    .setBody(data)
+    .send<APIResponseType>();
+
+  return response;
 };
 
 export const handleQueryClutser = async (

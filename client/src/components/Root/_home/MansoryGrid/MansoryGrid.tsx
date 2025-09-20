@@ -1,7 +1,7 @@
 "use client";
 
 import MansoryItem from "./MansoryItem";
-import { lazy } from "react";
+import { lazy, memo } from "react";
 import { Masonry } from "react-plock";
 import { useInfiniteElements } from "./hook/useInfiniteElements";
 import { GetElementQuery } from "@/shared/types/ElementAPI";
@@ -36,15 +36,19 @@ export default function MasonryInfiniteGallery({
 
       <div ref={loadMoreRef} style={{ height: 1 }} />
 
-      {isLoading && (
-        <DotLottieReact
-          className=" -translate-y-1/2 -translate-x-1/2 h-10 left-1/2 fixed top-1/2 translate"
-          src="https://lottie.host/211fb592-99fb-48c3-83ce-5938a5692053/qeSfsN5Gb5.lottie"
-          loop
-          autoplay
-        />
-      )}
-      {isFetchingNextPage && <p>Loading...</p>}
+      {isLoading && <LoadingIndicator />}
+      {isFetchingNextPage && <FetchingNextPage />}
     </div>
   );
 }
+
+const LoadingIndicator = () => (
+  <DotLottieReact
+    className=" -translate-y-1/2 -translate-x-1/2 h-10 left-1/2 fixed top-1/2 translate"
+    src="https://lottie.host/211fb592-99fb-48c3-83ce-5938a5692053/qeSfsN5Gb5.lottie"
+    loop
+    autoplay
+  />
+);
+
+const FetchingNextPage = () => <p>Loading...</p>;
