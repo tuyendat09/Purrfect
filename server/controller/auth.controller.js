@@ -138,6 +138,31 @@ exports.handleGetUser = async (req, res) => {
   return res.status(200).json(user);
 };
 
+exports.handleGetUserByUsername = asyncHandler(async (req, res) => {
+  console.log("call");
+  const { username } = req.query;
+  const { success, user, code } = await authServices.handeGetUserByUsername(
+    username
+  );
+
+  if (!success) {
+    let message;
+    switch (code) {
+      case "USER_NOT_FOUND":
+        message =
+          "Whoops! We can’t locate your profile. Time for a fresh login.";
+        break;
+
+      default:
+        message = "Something wrong :(";
+        break;
+    }
+    return res.status(400).json({ success: success, message: message });
+  }
+
+  return res.status(200).json({ success: success, user: user });
+});
+
 exports.handleEditUserName = asyncHandler(async (req, res) => {
   const { username } = req.body;
   const userId = req.user.id;

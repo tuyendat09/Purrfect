@@ -20,6 +20,10 @@ const clustersSchema = new Schema(
         ref: "Element",
       },
     ],
+    thumbnail: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: { createdAt: true, updatedAt: false },

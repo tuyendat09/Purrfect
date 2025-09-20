@@ -206,6 +206,7 @@ const verifyTokenAndGetUser = async (refreshToken) => {
 };
 
 exports.handleRefreshToken = async (refreshToken, req) => {
+  console.log("Refresh Token Call");
   const verifyResult = await verifyTokenAndGetUser(refreshToken);
   if (!verifyResult.success) return verifyResult;
 
@@ -295,4 +296,19 @@ exports.handleGetUser = async (userId) => {
   }
 
   return { success: true, user };
+};
+
+const prepareUserByUsername = async (username) => {
+  const user = await User.findOne({ username });
+  if (!user) {
+    return { success: false, code: "USER_NOT_FOUND" };
+  }
+  return { success: true, user: user };
+};
+
+exports.handeGetUserByUsername = async (username) => {
+  const result = await prepareUserByUsername(username);
+  if (!result.success) return result;
+  const publicUser = getPublicUser(result.user);
+  return { success: true, user: publicUser };
 };

@@ -30,7 +30,7 @@ const userSchema = new Schema(
 
     profilePicture: {
       type: String,
-      default: null,
+      default: "default-user-profile",
     },
 
     userRole: {
