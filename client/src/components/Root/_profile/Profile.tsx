@@ -2,7 +2,6 @@ import Link from "next/link";
 import ProfileCluster from "./ProfileCluster";
 import ProfileHeader from "./ProfileHeader";
 import { getUserByUsernameServer } from "./utils/GetUser";
-import { Suspense } from "react";
 import Button from "@/shared/components/Button";
 
 interface ProfileProps {
@@ -19,7 +18,7 @@ export default async function ProfileContent({ username }: ProfileProps) {
         <ProfileCluster />
       </>
     );
-  } catch (error) {
+  } catch (err) {
     return <PageNotFound />;
   }
 }

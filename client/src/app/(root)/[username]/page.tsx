@@ -7,24 +7,23 @@ type Props = {
   params: { username: string };
 };
 
-// Metadata động
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const user = await getUserByUsernameServer(params.username);
+    const {username } = await params
+    const user = await getUserByUsernameServer(username);
 
     if (!user?.user) {
       return {
-        title: "🐾 User not found",
+        title: "User not found",
         description: "Trang này không tồn tại hoặc đã bị xoá.",
       };
     }
 
     return {
       title: `${user.user.userFullname} (@${user.user.username})`,
-      description: `Xem profile của ${user.user.userFullname} trên Petz.`,
+      description: `Profile ${user.user.userFullname}.`,
       openGraph: {
         title: `${user.user.userFullname} (@${user.user.username})`,
-        images: [user.user.profilePicture || "/default-avatar.png"],
       },
     };
   } catch {
@@ -35,7 +34,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-// Page chính
-export default function Page({ params }: Props) {
-  return <Profile username={params.username} />;
+export default async function Page({ params }: Props) {
+  const { username } = await params;
+
+  return <Profile username={username} />;
 }

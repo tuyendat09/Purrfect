@@ -9,13 +9,14 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 const sizeClasses = {
   sm: "max-w-sm",
   md: "max-w-md",
   lg: "max-w-2xl",
+  xl: "max-w-3xl",
 };
 
 export default function Modal({
@@ -33,19 +34,28 @@ export default function Modal({
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
+
     window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, [onClose]);
+
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+      document.body.style.overflow = "";
+    };
+  }, [isOpen, onClose]);
 
   if (!mounted) return null;
-
-  console.log("Modal render");
 
   return createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="fixed inset-0 z-[9999] flex items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -60,7 +70,7 @@ export default function Modal({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             className={clsx(
-              "relative z-10 w-full rounded-xl bg-white p-6 shadow-xl",
+              "relative z-10 w-full rounded-xl bg-gray-neutral-200 p-6 shadow-xl",
               sizeClasses[size]
             )}
           >

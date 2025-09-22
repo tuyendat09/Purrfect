@@ -32,6 +32,7 @@ export default function CreateClusterModal({
         </ModalHeader>
         <ModalBody>
           <NormalInput
+            inputClassName="!bg-gray-neutral-300"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 if (inputRef.current) {

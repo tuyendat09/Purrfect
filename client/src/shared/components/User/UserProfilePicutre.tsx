@@ -4,11 +4,11 @@ import Image from "next/image";
 
 interface UserProfilePictureProps {
   userProfilePicture?: string;
-  variant?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg";
 }
 
-const variantClasses: Record<
-  NonNullable<UserProfilePictureProps["variant"]>,
+const sizeClasses: Record<
+  NonNullable<UserProfilePictureProps["size"]>,
   string
 > = {
   sm: "size-6",
@@ -18,7 +18,7 @@ const variantClasses: Record<
 
 export default function UserProfilePicture({
   userProfilePicture,
-  variant = "sm",
+  size = "sm",
 }: UserProfilePictureProps) {
   const profilePicture =
     userProfilePicture !== undefined &&
@@ -29,7 +29,7 @@ export default function UserProfilePicture({
   return (
     <div>
       <Image
-        className={clsx(variantClasses[variant], "rounded-full")}
+        className={clsx(sizeClasses[size], "rounded-full")}
         src={profilePicture}
         width={100}
         height={100}
