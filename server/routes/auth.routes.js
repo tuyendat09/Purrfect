@@ -17,6 +17,7 @@ router.post("/login", authController.handleLogin);
 router.post("/verifyOTP", authController.handleVerifyOTP);
 router.post("/logout", authController.handleLogout);
 router.post("/refresh-token", authController.handleRefreshToken);
+router.post(("/verify-token", authController.handleVerifyToken));
 
 // PUT METHOD
 router.put(

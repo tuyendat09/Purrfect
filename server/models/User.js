@@ -26,6 +26,9 @@ const userSchema = new Schema(
       default: null,
     },
 
+    userBio: { type: String, required: false, default: null },
+    userCountry: { type: String, required: false, default: null },
+    userBirthdate: { type: Date, required: false, default: null },
     userFullname: { type: String, default: null },
 
     profilePicture: {

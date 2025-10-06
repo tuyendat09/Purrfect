@@ -189,3 +189,7 @@ exports.handleEditUserName = asyncHandler(async (req, res) => {
     .status(200)
     .json({ success: true, message: "Nice! Your username has been set. 🎉" });
 });
+
+exports.handleVerifyToken = asyncHandler(async (req, res) => {
+  res.status({ success: true, message: "Token is valid" });
+});

@@ -5,7 +5,6 @@ const { sendOtpEmail, generateOTP } = require("../utils/sendOTP");
 const { isValidEmail, isValidPassword } = require("../utils/verifyResigerData");
 const isDocumentExist = require("../utils/isDocumentExist");
 const {
-  handleGenerateToken,
   generateToken,
   generateRefreshToken,
 } = require("../utils/generateToken");
