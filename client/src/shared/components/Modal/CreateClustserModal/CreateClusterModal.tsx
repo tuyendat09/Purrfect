@@ -26,13 +26,13 @@ export default function CreateClusterModal({
       <ModalContent>
         <ModalHeader>
           <div className="text-center font-normal">
-            <h1 className="font-serif">New Cluster</h1>
-            <p className="text-sm">A colection of elements</p>
+            <h1 className="font-serif mb-3">New Cluster</h1>
+            <p className="text-sm mb-3">A colection of elements</p>
           </div>
         </ModalHeader>
         <ModalBody>
           <NormalInput
-            inputClassName="!bg-gray-neutral-300"
+            inputClassName="!bg-gray-neutral-300 my-5"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 if (inputRef.current) {

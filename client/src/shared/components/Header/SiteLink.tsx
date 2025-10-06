@@ -13,35 +13,17 @@ import {
 import FlagElement from "../Icon/FlagIcon";
 import { ChevronDown, NewCluster, NewImage } from "../Icon";
 import { lazy } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { getUser, logout } from "@/shared/apis/Auth";
-import { useRouter } from "next/navigation";
 import useToggle from "@/shared/hook/useToggle";
 import UserProfilePicture from "../User/UserProfilePicutre";
+import useUser from "@/shared/hook/useAuth";
 
 const CreateClusterModal = lazy(
   () => import("../Modal/CreateClustserModal/CreateClusterModal")
 );
 
 export default function SiteLink() {
+  const { handleLogout, data } = useUser();
   const { toggle, handleToggle } = useToggle();
-
-  const router = useRouter();
-
-  const { data } = useQuery({
-    queryKey: ["getUser"],
-    queryFn: getUser,
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const mutation = useMutation({
-    mutationFn: logout,
-  });
-
-  function handleLogout() {
-    mutation.mutateAsync();
-    router.push("/auth");
-  }
 
   return (
     <div className="flex items-center gap-2">

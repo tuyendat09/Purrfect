@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { EyesOpen, EyesClose } from "@/shared/components/Icon/index"; // Ensure correct icon imports
+import { clsx } from "clsx";
 
 // Props for the FloatingInput component, extending all standard input attributes
 interface FloatingInputProps
@@ -11,6 +12,8 @@ interface FloatingInputProps
   errorMessage?: string;
   classNames?: string;
   endContent?: React.ReactNode;
+  clearBackground?: boolean;
+  overrideClass?: string;
 }
 
 const PasswordToggleIcon = ({ show }: { show: boolean }) =>
@@ -27,6 +30,8 @@ export default function FloatingInput({
   classNames = "",
   endContent,
   type = "text",
+  overrideClass,
+  clearBackground = false,
   ...inputProps // Accepts all other input props
 }: FloatingInputProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +54,13 @@ export default function FloatingInput({
         id={name}
         placeholder=" "
         name={name}
-        className="peer block w-full rounded-full px-6 py-5 text-sm text-white bg-[#1d1d1d] border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600"
+        className={clsx(
+          clearBackground
+            ? "border-gray-neutral-400 border text-black"
+            : "bg-[#1d1d1d] text-white",
+          overrideClass,
+          `peer block w-full rounded-full px-6 py-5 text-sm  0border-gray-300 appearance-none focus:outline-none focus:ring-0`
+        )}
         {...inputProps} // Spread additional props to the input element
       />
       <label

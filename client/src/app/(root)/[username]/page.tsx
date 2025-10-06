@@ -1,4 +1,3 @@
-// app/[username]/page.tsx
 import Profile from "@/components/Root/_profile/Profile";
 import { getUserByUsernameServer } from "@/components/Root/_profile/utils/GetUser";
 import type { Metadata } from "next";
@@ -9,7 +8,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const {username } = await params
+    const { username } = await params;
     const user = await getUserByUsernameServer(username);
 
     if (!user?.user) {

@@ -11,11 +11,11 @@ import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { ThreeDots } from "@/shared/components/Icon";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { formatDateToCustomString } from "@/shared/utils/formatDate";
-import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import { clsx } from "clsx";
 import { useGSAP } from "@gsap/react";
 import MasonryInfiniteGallery from "../_home/MansoryGrid/MansoryGrid";
+import { useEffect, useRef, useState } from "react";
 
 export default function Element({ id }: { id: string }) {
   const { element } = useElementQuery(id);

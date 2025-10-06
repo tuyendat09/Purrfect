@@ -4,12 +4,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
   size?: "sm" | "md" | "lg" | "xl";
+  className?: string;
 }
 
 const sizeClasses = {
@@ -24,6 +26,7 @@ export default function Modal({
   onClose,
   children,
   size = "md",
+  className,
 }: ModalProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -61,7 +64,7 @@ export default function Modal({
           exit={{ opacity: 0 }}
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+          <div className="absolute inset-0 bg-black/75" onClick={onClose} />
 
           {/* Modal content */}
           <motion.div
@@ -70,10 +73,17 @@ export default function Modal({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             className={clsx(
-              "relative z-10 w-full rounded-xl bg-gray-neutral-200 p-6 shadow-xl",
-              sizeClasses[size]
+              "relative z-10 w-full rounded-xl bg-gray-neutral-200 p-4 shadow-xl",
+              sizeClasses[size],
+              className
             )}
           >
+            <button
+              className="absolute top-4 right-8 hover:bg-gray-neutral-400 p-2 transition  rounded-full cursor-pointer z-10"
+              onClick={onClose}
+            >
+              <Icon icon="iconamoon:close-bold" width="14" height="14" />
+            </button>
             {children}
           </motion.div>
         </motion.div>

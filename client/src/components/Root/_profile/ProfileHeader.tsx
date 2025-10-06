@@ -1,11 +1,13 @@
 "use client";
-
 import { PublicUser } from "@/shared/types/User";
 import Button from "@/shared/components/Button";
 import UserProfilePicture from "@/shared/components/User/UserProfilePicutre";
 import useToggle from "@/shared/hook/useToggle";
-import ProfileModal from "@/shared/components/Modal/ProfileModal/ProfileModal";
+import { lazy } from "react";
 
+const ProfileModal = lazy(
+  () => import("@/shared/components/Modal/ProfileModal/ProfileModal")
+);
 type ProfileHeaderProps = {
   user?: PublicUser;
 };

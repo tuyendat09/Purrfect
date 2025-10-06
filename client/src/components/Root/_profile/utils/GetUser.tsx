@@ -1,3 +1,5 @@
+"use server";
+
 import { cookies } from "next/headers";
 
 async function fetchUserByUsername(username: string, sid: string) {

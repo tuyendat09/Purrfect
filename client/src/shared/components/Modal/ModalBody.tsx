@@ -1,7 +1,9 @@
 interface ModalBodyProps {
   children?: React.ReactNode;
+  className?: string;
 }
 
-export default function ModalBody({ children }: ModalBodyProps) {
-  return <div className="mb-4">{children}</div>;
+export default function ModalBody({ children, className }: ModalBodyProps) {
+  
+  return <div className={`mb-4 ${className}`}>{children}</div>;
 }

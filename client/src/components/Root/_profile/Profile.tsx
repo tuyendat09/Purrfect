@@ -8,7 +8,7 @@ interface ProfileProps {
   username: string;
 }
 
-export default async function ProfileContent({ username }: ProfileProps) {
+export default async function Profile({ username }: ProfileProps) {
   try {
     const user = await getUserByUsernameServer(username);
 

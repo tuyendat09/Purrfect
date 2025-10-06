@@ -9,7 +9,7 @@ export default function ProfileCluster() {
   const SKELETON_NUMBER = 4;
   const { allClusers, isLoading } = useClusterProfile();
   return (
-    <div className="grid grid-cols-5 gap-[60px] mt-20">
+    <div className="grid grid-cols-5 gap-[60px] mt-20 items-start">
       <NewProfileCluster />
       {allClusers.map((cluster) => (
         <ProfileClusterItem
