@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/shared/store/authStore";
 import UserDefaultPicture from "@@/images/default-user.webp";
 import clsx from "clsx";
 import Image from "next/image";
@@ -20,6 +21,7 @@ export default function UserProfilePicture({
   userProfilePicture,
   size = "sm",
 }: UserProfilePictureProps) {
+
   const profilePicture =
     userProfilePicture !== undefined &&
     userProfilePicture !== "default-user-picture"

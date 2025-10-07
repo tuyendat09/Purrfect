@@ -10,7 +10,10 @@ export default function LoginVideo() {
           playsInline
           muted
         >
-          <source src="/videos/log-in-video.webm" type="video/webm" />
+          <source
+            src="https://www.cosmos.so/videos/cosmos-rock-spin.webm"
+            type="video/webm"
+          />
         </video>
       </div>
     </>

@@ -1,6 +1,7 @@
 import Profile from "@/components/Root/_profile/Profile";
 import { getUserByUsernameServer } from "@/components/Root/_profile/utils/GetUser";
 import type { Metadata } from "next";
+import NotFoundPage from "@/shared/components/NotFoundPage/NotFoundPage";
 
 type Props = {
   params: { username: string };
@@ -36,5 +37,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { username } = await params;
 
-  return <Profile username={username} />;
+  try {
+    const user = await getUserByUsernameServer(username);
+    return <Profile user={user.user} />;
+  } catch {
+    return <NotFoundPage />;
+  }
 }

@@ -1,14 +1,13 @@
-import { handleQueryClutser } from "@/shared/apis/Cluster";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export default function useClusterProfile() {
   const query = useInfiniteQuery({
     queryKey: ["cluster"],
     queryFn: async ({ pageParam = 1 as number }) => {
-      return await handleQueryClutser({
+      const { getClusterServer } = await import("../utils/GetClusterServer");
+      return getClusterServer({
         page: pageParam,
         limit: 25,
-        otherUserId: "",
       });
     },
     getNextPageParam: (lastPage, page) =>
