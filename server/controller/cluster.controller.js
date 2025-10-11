@@ -35,7 +35,6 @@ exports.handleQueryCluster = asyncHandler(async (req, res) => {
   const userId = req.user.id;
 
   const queryData = { query, userId };
-
   const result = await clusterServices.handleQueryCluster(queryData);
 
   return res.status(200).json({ success: true, result });

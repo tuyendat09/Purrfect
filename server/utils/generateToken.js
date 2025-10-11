@@ -7,6 +7,7 @@ const REFRESH_JWT_EXPIRES_IN = "365d";
 function preparePayload(user) {
   const payload = {
     id: user._id,
+    username:user.username,
     role: user.userRole,
   };
   return payload;

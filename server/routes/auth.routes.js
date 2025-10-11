@@ -17,7 +17,7 @@ router.post("/login", authController.handleLogin);
 router.post("/verifyOTP", authController.handleVerifyOTP);
 router.post("/logout", authController.handleLogout);
 router.post("/refresh-token", authController.handleRefreshToken);
-router.post(("/verify-token", authController.handleVerifyToken));
+router.post("/verify-token", checkRole([]), authController.handleVerifyToken);
 
 // PUT METHOD
 router.put(
@@ -25,5 +25,6 @@ router.put(
   checkRole(["user"]),
   authController.handleEditUserName
 );
+
 
 module.exports = router;

@@ -37,6 +37,7 @@ app.use(
 const authRouter = require("./routes/auth.routes");
 const elementRouter = require("./routes/element.routes");
 const clusterRouter = require("./routes/cluster.routes");
+const userRouter = require("./routes/user.routes");
 const checkRole = require("./middleware/checkRole");
 
 // === Security Middleware ===
@@ -75,9 +76,10 @@ app.use(jsonParser);
 app.use("/api/auth", authRouter);
 
 // Need Token
-app.use(checkRole([]));
+// app.use(checkRole([]));
 app.use("/api/element", elementRouter);
 app.use("/api/cluster", clusterRouter);
+app.use("/api/user", userRouter);
 
 // Only Admin Route
 

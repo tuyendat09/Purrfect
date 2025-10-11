@@ -20,6 +20,12 @@ function bufferToStream(buffer) {
   return readable;
 }
 
+function prepareImageUrl(fileId) {
+  const publicUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+
+  return publicUrl;
+}
+
 async function makeFilePublic(fileId) {
   try {
     const drive = google.drive({ version: "v3", auth });
@@ -32,12 +38,10 @@ async function makeFilePublic(fileId) {
       },
     });
 
-    const file = await drive.files.get({
+    await drive.files.get({
       fileId: fileId,
-      fields: "webViewLink", // Lấy webViewLink hoặc webContentLink tùy vào nhu cầu
+      fields: "webViewLink",
     });
-
-    return file.data.webViewLink;
   } catch (error) {
     console.error("Error making file public:", error.message);
     throw error;
@@ -64,7 +68,7 @@ exports.uploadFileToDrive = async (
     const drive = google.drive({ version: "v3", auth });
 
     const originalBuffer = file.buffer;
-    const resizedBuffer = await resizeImage(file.buffer, 500, 500);
+    const resizedBuffer = await resizeImage(file.buffer);
 
     // Generate unique filenames
     const baseName = file.originalname.replace(/\.[^/.]+$/, ""); // Remove extension
@@ -104,7 +108,8 @@ exports.uploadFileToDrive = async (
 
       const fileId = response.data.id;
       await makeFilePublic(fileId);
-      const publicUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+
+      const publicUrl = prepareImageUrl(fileId);
 
       return publicUrl;
     });
@@ -117,6 +122,82 @@ exports.uploadFileToDrive = async (
     };
   } catch (error) {
     console.error("Error uploading files to Google Drive:", error.message);
+    throw error;
+  }
+};
+
+async function uploadToProfilePicutreToDrive(buffer, folderId) {
+  const drive = google.drive({ version: "v3", auth });
+
+  const fileMetadata = {
+    name: `${uuidv4()}.jpg`,
+    parents: folderId,
+  };
+
+  const media = {
+    body: bufferToStream(buffer),
+  };
+
+  const file = await drive.files.create({
+    requestBody: fileMetadata,
+    media,
+    fields: "id",
+  });
+
+  const fileId = file.data.id;
+  await makeFilePublic(fileId);
+
+  return { fileId };
+}
+
+async function deleteFile(fileId) {
+  if (!fileId) return;
+  const drive = google.drive({ version: "v3", auth });
+  try {
+    await drive.files.delete({ fileId });
+  } catch (error) {
+    console.warn("Không thể xóa ảnh cũ:", error.message);
+  }
+}
+
+exports.updateUserImage = async (
+  newFile,
+  folderId = "1PLTgeqEZsnOX_vYoWqWYvsmiSiJKuu3J"
+) => {
+  try {
+    const drive = google.drive({ version: "v3", auth });
+
+    const resizedBuffer = await resizeImage(newFile.buffer);
+
+    const baseName = newFile.originalname.replace(/\.[^/.]+$/, "");
+    const extension = path.extname(newFile.originalname);
+    const finalFileName = `${uuidv4()}-${baseName}-profile${extension}`;
+
+    const fileMetadata = {
+      name: finalFileName,
+      parents: [folderId],
+    };
+
+    const media = {
+      mimeType: newFile.mimetype,
+      body: bufferToStream(resizedBuffer),
+    };
+
+    const response = await drive.files.create({
+      resource: fileMetadata,
+      media,
+      fields: "id",
+    });
+
+    const fileId = response.data.id;
+
+    await makeFilePublic(fileId);
+
+    const publicUrl = prepareImageUrl(fileId);
+
+    return publicUrl;
+  } catch (error) {
+    console.error("Error updating user image:", error.message);
     throw error;
   }
 };
