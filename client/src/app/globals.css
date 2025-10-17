@@ -19,6 +19,8 @@
   --color-gray-neutral-700: #69696c;
 }
 
+
+
 .container {
   margin:auto;
     width: 100%;
@@ -51,4 +53,13 @@
 body {
   background: var(--background);
   overflow-x: hidden;
+}
+
+
+.glass {
+  background-color: rgba(191, 188, 188, 0.25);
+  --tw-bg-opacity: 0.25;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition-property: transform, opacity;
 }

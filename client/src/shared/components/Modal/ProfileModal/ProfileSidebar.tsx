@@ -1,3 +1,4 @@
+import { Icon } from "@iconify/react/dist/iconify.js";
 import UserProfilePicture from "../../User/UserProfilePicutre";
 
 const SIDEBAR_ITEMS = [
@@ -19,7 +20,27 @@ export default function ProfileSidebar({
 
   return (
     <div className="shrink-0 min-w-[180px] max-w-[250px] w-[34.25%]  pr-5     flex flex-col gap-8">
-      <UserProfilePicture size="md" userProfilePicture={userProfilePicture} />
+      <div className="relative  w-fit">
+        <label
+          htmlFor="image"
+          className="absolute glass p-1 rounded-full cursor-pointer right-0"
+        >
+          <Icon icon="mynaui:edit" width="16" height="16" />
+          <input
+            onChange={async (e) => {
+              const { handleUpdateUserPicture } = await import(
+                "./utils/handeUploadUserImage"
+              );
+              handleUpdateUserPicture(e);
+            }}
+            id="image"
+            className="hidden"
+            type="file"
+            name="image"
+          />
+        </label>
+        <UserProfilePicture size="md" userProfilePicture={userProfilePicture} />
+      </div>
       <ul className="space-y-3 text-sm ">
         {SIDEBAR_ITEMS.map((item) => (
           <li
