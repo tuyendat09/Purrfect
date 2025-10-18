@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const { getOrSetCache } = require("../utils/redisCache");
-const { updateUserImage } = require("../utils/uploadToDrive");
+const { handleUpdateUserImage } = require("../utils/uploadToDrive");
+const userUtils = require("../utils/user.utils");
 
 async function checkUsernameExist(username) {
   const existing = await User.findOne({
@@ -29,22 +30,6 @@ const validateUserNameChange = async (userId, username) => {
   return { success: true, user };
 };
 
-const revalidateCache = async (userId) => {
-  const cacheField = "info"; // field riêng cho user info
-
-  await getOrSetCache(
-    userId,
-    cacheField,
-    async () => {
-      const user = await prepareUser(userId);
-      if (!user || user.success === false) return null;
-      return getPublicUser(user);
-    },
-    300,
-    true
-  );
-};
-
 exports.handleChangeUserName = async (userId, username) => {
   const { success, code, user } = await validateUserNameChange(
     userId,
@@ -59,9 +44,34 @@ exports.handleChangeUserName = async (userId, username) => {
   return { success: true };
 };
 
-exports.handleUpdateProfilePicture = async (
-  // userId,
-  newImage
-) => {
-  await updateUserImage(newImage);
+// const handleDeleteOldProfilePicture = async () => {
+
+// }
+
+const updateProfilePicture = async (user, newImage) => {
+  console.log(user);
+  user.profilePicture = newImage;
+  await user.save();
+  return user;
+};
+
+const handleCheckImageSize = (fileSize) => {
+  const MAX_SIZE = 10 * 1024 * 1024;
+  if (fileSize > MAX_SIZE) {
+    return { sucesss: false, code: "INVALID_IMAGE_SIZE" };
+  }
+  return { success: true };
+};
+
+exports.handleUpdateProfilePicture = async (userId, newImage) => {
+  const result = await userUtils.prepareUser(userId);
+  if (!result.success) return result;
+
+  const validatedImageSize = handleCheckImageSize(newImage.size);
+  if (!validatedImageSize.success) return validatedImageSize;
+
+  const newUserPictureUrl = await handleUpdateUserImage(newImage);
+  await updateProfilePicture(result.user, newUserPictureUrl);
+  await userUtils.revalidateCache(userId);
+  return { success: true };
 };

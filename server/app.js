@@ -76,7 +76,7 @@ app.use(jsonParser);
 app.use("/api/auth", authRouter);
 
 // Need Token
-// app.use(checkRole([]));
+app.use(checkRole([]));
 app.use("/api/element", elementRouter);
 app.use("/api/cluster", clusterRouter);
 app.use("/api/user", userRouter);

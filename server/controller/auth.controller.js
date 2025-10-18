@@ -192,7 +192,6 @@ exports.handleEditUserName = asyncHandler(async (req, res) => {
 
 exports.handleVerifyToken = asyncHandler(async (req, res) => {
   const user = req.user;
-  console.log(user);
   return res
     .status(200)
     .json({ user: user, success: true, message: "Valid token" });

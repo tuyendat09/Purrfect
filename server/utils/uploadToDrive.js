@@ -126,28 +126,36 @@ exports.uploadFileToDrive = async (
   }
 };
 
-async function uploadToProfilePicutreToDrive(buffer, folderId) {
+async function uploadToProfilePicutreToDrive(
+  newFile,
+  folderId = "1PLTgeqEZsnOX_vYoWqWYvsmiSiJKuu3J"
+) {
   const drive = google.drive({ version: "v3", auth });
+  const resizedBuffer = await resizeImage(newFile.buffer);
+
+  const baseName = newFile.originalname.replace(/\.[^/.]+$/, "");
+  const extension = path.extname(newFile.originalname);
+  const finalFileName = `${uuidv4()}-${baseName}-profile${extension}`;
 
   const fileMetadata = {
-    name: `${uuidv4()}.jpg`,
-    parents: folderId,
+    name: finalFileName,
+    parents: [folderId],
   };
 
   const media = {
-    body: bufferToStream(buffer),
+    mimeType: newFile.mimetype,
+    body: bufferToStream(resizedBuffer),
   };
 
-  const file = await drive.files.create({
-    requestBody: fileMetadata,
+  const response = await drive.files.create({
+    resource: fileMetadata,
     media,
     fields: "id",
   });
 
-  const fileId = file.data.id;
-  await makeFilePublic(fileId);
+  const fileId = response.data.id;
 
-  return { fileId };
+  return fileId;
 }
 
 async function deleteFile(fileId) {
@@ -160,39 +168,10 @@ async function deleteFile(fileId) {
   }
 }
 
-exports.updateUserImage = async (
-  newFile,
-  folderId = "1PLTgeqEZsnOX_vYoWqWYvsmiSiJKuu3J"
-) => {
+exports.handleUpdateUserImage = async (newFile) => {
   try {
-    const drive = google.drive({ version: "v3", auth });
-
-    const resizedBuffer = await resizeImage(newFile.buffer);
-
-    const baseName = newFile.originalname.replace(/\.[^/.]+$/, "");
-    const extension = path.extname(newFile.originalname);
-    const finalFileName = `${uuidv4()}-${baseName}-profile${extension}`;
-
-    const fileMetadata = {
-      name: finalFileName,
-      parents: [folderId],
-    };
-
-    const media = {
-      mimeType: newFile.mimetype,
-      body: bufferToStream(resizedBuffer),
-    };
-
-    const response = await drive.files.create({
-      resource: fileMetadata,
-      media,
-      fields: "id",
-    });
-
-    const fileId = response.data.id;
-
+    const fileId = await uploadToProfilePicutreToDrive(newFile);
     await makeFilePublic(fileId);
-
     const publicUrl = prepareImageUrl(fileId);
 
     return publicUrl;

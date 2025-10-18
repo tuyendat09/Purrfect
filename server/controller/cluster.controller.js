@@ -34,6 +34,7 @@ exports.handleQueryCluster = asyncHandler(async (req, res) => {
   const query = req.query;
   const userId = req.user.id;
 
+
   const queryData = { query, userId };
   const result = await clusterServices.handleQueryCluster(queryData);
 

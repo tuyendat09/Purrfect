@@ -30,7 +30,8 @@ exports.handleEditUserName = asyncHandler(async (req, res) => {
 
 exports.handleChangePictureProfile = asyncHandler(async (req, res) => {
   const { file, user } = req;
-  await userServices.handleUpdateProfilePicture(file);
+  
+  await userServices.handleUpdateProfilePicture(user.id, file);
 
   return res
     .status(200)

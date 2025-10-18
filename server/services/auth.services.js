@@ -11,6 +11,7 @@ const {
 const verifyEmptyData = require("../utils/verifyEmptyData");
 const { verifyRefreshToken } = require("../utils/verifyJWT");
 const { getOrSetCache } = require("../utils/redisCache");
+const userUtils = require("../utils/user.utils");
 
 const isUserExist = (email) => {
   return isDocumentExist(User, { email: email });
@@ -161,15 +162,6 @@ const checkCredentials = async (loginData) => {
   return { success: true, user };
 };
 
-const getPublicUser = (user) => {
-  return {
-    id: user._id,
-    username: user.username,
-    userFullname: user.userFullname,
-    profilePicture: user.profilePicture,
-  };
-};
-
 const handleStoreToken = (user, req) => {
   const token = generateToken(user);
   const refreshToken = generateRefreshToken(user);
@@ -187,7 +179,7 @@ exports.handleLogin = async (loginData, req) => {
 
   return {
     success: true,
-    user: getPublicUser(user),
+    user: userUtils.getPublicUser(user),
   };
 };
 
@@ -212,24 +204,13 @@ exports.handleRefreshToken = async (refreshToken, req) => {
   return { success: true };
 };
 
-const prepareUser = async (userId) => {
-  const user = await User.findById(userId).lean();
-
-  if (!user) {
-    return { success: false, code: "USER_NOT_FOUND" };
-  }
-  return user;
-};
-
 exports.handleGetUser = async (userId) => {
   const cacheField = "info";
-
+  
   const user = await getOrSetCache(userId, cacheField, async () => {
-    const data = await prepareUser(userId);
-
-    if (!data || data?.success === false) return null;
-
-    return getPublicUser(data);
+    const data = await userUtils.prepareUser(userId);
+    if (!data.success) return data;
+    return userUtils.getPublicUser(data.user);
   });
 
   if (!user) {
@@ -250,6 +231,6 @@ const prepareUserByUsername = async (username) => {
 exports.handeGetUserByUsername = async (username) => {
   const result = await prepareUserByUsername(username);
   if (!result.success) return result;
-  const publicUser = getPublicUser(result.user);
+  const publicUser = userUtils.getPublicUser(result.user);
   return { success: true, user: publicUser };
 };
