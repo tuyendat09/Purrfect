@@ -1,6 +1,6 @@
-import { PublicUser } from "@/shared/types/User";
 import ProfileHeader from "./ProfileHeader";
 import ProfileClusterServer from "./ProfileClusterServer";
+import { PublicUser } from "@/shared/types/User";
 
 interface ProfileProps {
   user: PublicUser;

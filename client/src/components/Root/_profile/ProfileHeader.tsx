@@ -2,9 +2,9 @@
 
 import { PublicUser } from "@/shared/types/User";
 import Button from "@/shared/components/Button";
-import UserProfilePicture from "@/shared/components/User/UserProfilePicutre";
 import useToggle from "@/shared/hook/useToggle";
 import { lazy } from "react";
+import UserProfilePicture from "@/shared/components/User/UserProfilePicture";
 
 const ProfileModal = lazy(
   () => import("@/shared/components/Modal/ProfileModal/ProfileModal")

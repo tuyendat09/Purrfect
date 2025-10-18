@@ -1,4 +1,3 @@
-import { useAuthStore } from "@/shared/store/authStore";
 import UserDefaultPicture from "@@/images/default-user.webp";
 import clsx from "clsx";
 import Image from "next/image";
@@ -12,7 +11,7 @@ const sizeClasses: Record<
   NonNullable<UserProfilePictureProps["size"]>,
   string
 > = {
-  sm: "size-6",
+  sm: "size-8",
   md: "w-[96px] h-[96px]",
   lg: "w-[128px] h-[128px]",
 };
@@ -21,21 +20,26 @@ export default function UserProfilePicture({
   userProfilePicture,
   size = "sm",
 }: UserProfilePictureProps) {
-
   const profilePicture =
-    userProfilePicture !== undefined &&
-    userProfilePicture !== "default-user-picture"
-      ? userProfilePicture
-      : UserDefaultPicture;
+    userProfilePicture === "default-user-profile" || !userProfilePicture
+      ? UserDefaultPicture
+      : userProfilePicture;
+
+  const sizeClass = sizeClasses[size];
 
   return (
-    <div>
+    <div
+      className={clsx(
+        sizeClass,
+        "relative rounded-full overflow-hidden" // quan trọng để clip ảnh tròn + fill
+      )}
+    >
       <Image
-        className={clsx(sizeClasses[size], "rounded-full")}
         src={profilePicture}
-        width={100}
-        height={100}
-        alt="nenene"
+        fill
+        className="object-cover"
+        alt="User profile"
+        priority
       />
     </div>
   );

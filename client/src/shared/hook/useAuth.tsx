@@ -11,7 +11,7 @@ export default function useUser() {
   const clearUser = useAuthStore((s) => s.clearUser);
 
   const { data, error } = useQuery({
-    queryKey: ["getUser"],
+    queryKey: ["users"],
     queryFn: getUser,
     staleTime: 1000 * 60 * 5,
     retry: false,

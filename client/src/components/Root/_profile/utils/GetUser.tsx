@@ -10,9 +10,25 @@ async function fetchUserByUsername(username: string, sid: string) {
       headers: {
         Cookie: `sid=${sid}`,
       },
-      next: { revalidate: 300 },
+      next: { tags: ["users"], revalidate: 300 },
     }
   );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch user");
+  }
+
+  return res.json();
+}
+
+async function fetchUser(sid: string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN_API}/api/auth/`, {
+    method: "GET",
+    headers: {
+      Cookie: `sid=${sid}`,
+    },
+    next: { revalidate: 300 },
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch user");
@@ -25,4 +41,10 @@ export async function getUserByUsernameServer(username: string) {
   const cookieStore = await cookies();
   const sid = cookieStore.get("sid")?.value || "";
   return fetchUserByUsername(username, sid);
+}
+
+export async function getUserServer() {
+  const cookieStore = await cookies();
+  const sid = cookieStore.get("sid")?.value || "";
+  return fetchUser(sid);
 }

@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import UserProfilePicture from "../../User/UserProfilePicutre";
+import { useQueryClient } from "@tanstack/react-query";
+import UserProfilePicture from "../../User/UserProfilePicture";
 
 const SIDEBAR_ITEMS = [
   { label: "Profile", state: "profile" },
@@ -9,21 +10,23 @@ const SIDEBAR_ITEMS = [
 
 interface ProfileSidebarProps {
   userProfilePicture?: string;
+
   handleChangeContent: (changeContent: string) => void;
 }
 
 export default function ProfileSidebar({
-  userProfilePicture,
   handleChangeContent,
+  userProfilePicture,
 }: ProfileSidebarProps) {
   // const activeClass = "";
+  const queryClient = useQueryClient();
 
   return (
     <div className="shrink-0 min-w-[180px] max-w-[250px] w-[34.25%]  pr-5     flex flex-col gap-8">
       <div className="relative  w-fit">
         <label
           htmlFor="image"
-          className="absolute glass p-1 rounded-full cursor-pointer right-0"
+          className="absolute z-10 glass p-1 rounded-full cursor-pointer right-0"
         >
           <Icon icon="mynaui:edit" width="16" height="16" />
           <input
@@ -31,7 +34,7 @@ export default function ProfileSidebar({
               const { handleUpdateUserPicture } = await import(
                 "./utils/handeUploadUserImage"
               );
-              handleUpdateUserPicture(e);
+              handleUpdateUserPicture(e, queryClient);
             }}
             id="image"
             className="hidden"
@@ -39,7 +42,7 @@ export default function ProfileSidebar({
             name="image"
           />
         </label>
-        <UserProfilePicture size="md" userProfilePicture={userProfilePicture} />
+        <UserProfilePicture userProfilePicture={userProfilePicture} size="md" />
       </div>
       <ul className="space-y-3 text-sm ">
         {SIDEBAR_ITEMS.map((item) => (

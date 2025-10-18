@@ -3,7 +3,7 @@ import { DM_Sans, Playfair_Display } from "next/font/google";
 import StoreProvider from "../StoreProvider";
 import "../globals.css";
 import Container from "@/shared/components/Container";
-import Header from "@/shared/components/Header/Header";
+import HeaderServer from "@/shared/components/Header/HeaderServer";
 
 const dmSANS = DM_Sans({
   variable: "--font-dm-sans",
@@ -36,7 +36,7 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <Container>
           <StoreProvider>
-            <Header />
+            <HeaderServer />
             {children}
           </StoreProvider>
         </Container>

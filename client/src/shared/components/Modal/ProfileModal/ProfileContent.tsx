@@ -66,7 +66,7 @@ function ProfileSetting() {
 
 function AccountSetting() {
   return (
-    <div>
+    <div className="bg-red-500 h-full">
       <h1 className="font-serif mb-5 text-xl">Account</h1>
       <FloatingInput
         overrideClass="!rounded-2xl"

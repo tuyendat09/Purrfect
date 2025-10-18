@@ -14,8 +14,8 @@ import FlagElement from "../Icon/FlagIcon";
 import { ChevronDown, NewCluster, NewImage } from "../Icon";
 import { lazy } from "react";
 import useToggle from "@/shared/hook/useToggle";
-import UserProfilePicture from "../User/UserProfilePicutre";
 import useUser from "@/shared/hook/useAuth";
+import UserProfilePicture from "../User/UserProfilePicture";
 
 const CreateClusterModal = lazy(
   () => import("../Modal/CreateClustserModal/CreateClusterModal")
@@ -84,7 +84,7 @@ export default function SiteLink() {
       <Link href={data?.user.username || ""}>
         <div className="hover:bg-gray-neutral-300  p-2 rounded-full">
           <UserProfilePicture
-            userProfilePicture={data && data?.user.profilePicture}
+            userProfilePicture={data && data.user.profilePicture}
           />
         </div>
       </Link>

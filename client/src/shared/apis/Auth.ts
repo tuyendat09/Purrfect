@@ -99,7 +99,6 @@ export const getUserByUsername = async (username: {
         Accept: "application/json",
       })
       .setQuery(username)
-      .setCache(60)
       .send<GetUserResponse>()
   );
 };
