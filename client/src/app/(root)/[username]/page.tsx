@@ -38,9 +38,9 @@ export default async function Page({ params }: Props) {
   const { username } = await params;
 
   try {
-    const user = await getUserByUsernameServer(username);
+    const { user } = await getUserByUsernameServer(username);
 
-    return <Profile user={user.user} />;
+    return <Profile user={user} />;
   } catch {
     return <NotFoundPage />;
   }

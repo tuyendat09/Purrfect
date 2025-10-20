@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useInView } from "framer-motion";
 import { handleGetElement } from "@/shared/apis/Element";
 import { GetElementQuery } from "@/shared/types/ElementAPI";
@@ -11,8 +11,10 @@ export function useInfiniteElements(
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(loadMoreRef, { margin: "0px 0px 200px 0px" });
 
+  // const stableQuery = useMemo(() => extraQuery, [JSON.stringify(extraQuery)]);
+
   const query = useInfiniteQuery({
-    queryKey: ["masonryImages", extraQuery],
+    queryKey: ["masonryImages"],
     queryFn: async ({ pageParam = 1 as number }) => {
       return handleGetElement({
         page: pageParam,

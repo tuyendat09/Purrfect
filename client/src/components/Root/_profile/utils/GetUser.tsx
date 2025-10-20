@@ -1,8 +1,13 @@
 "use server";
 
+import {
+  GetUserByUsernameResponse,
+  GetUserResponse,
+} from "@/shared/types/User";
 import { cookies } from "next/headers";
 
 async function fetchUserByUsername(username: string, sid: string) {
+  console.log("fetch");
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_DOMAIN_API}/api/auth/by-username?username=${username}`,
     {
@@ -22,12 +27,13 @@ async function fetchUserByUsername(username: string, sid: string) {
 }
 
 async function fetchUser(sid: string) {
+  console.log("fetchUser");
   const res = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN_API}/api/auth/`, {
     method: "GET",
     headers: {
       Cookie: `sid=${sid}`,
     },
-    next: { revalidate: 300 },
+    next: { tags: ["publicUser"], revalidate: 300 },
   });
 
   if (!res.ok) {
@@ -37,13 +43,15 @@ async function fetchUser(sid: string) {
   return res.json();
 }
 
-export async function getUserByUsernameServer(username: string) {
+export async function getUserByUsernameServer(
+  username: string
+): Promise<GetUserByUsernameResponse> {
   const cookieStore = await cookies();
   const sid = cookieStore.get("sid")?.value || "";
   return fetchUserByUsername(username, sid);
 }
 
-export async function getUserServer() {
+export async function getUserServer(): Promise<GetUserResponse> {
   const cookieStore = await cookies();
   const sid = cookieStore.get("sid")?.value || "";
   return fetchUser(sid);

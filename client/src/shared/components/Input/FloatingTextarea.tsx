@@ -27,14 +27,13 @@ export default function FloatingTextarea({
         cols={10}
         rows={4}
         id={name}
-
         placeholder=" "
         name={name}
         className={clsx(
           clearBackground
             ? "border-gray-neutral-400 border text-black"
             : "bg-[#1d1d1d] text-white",
-          `peer block w-full rounded-2xl  px-6 py-5 text-sm border-gray-300 appearance-none focus:outline-none focus:ring-0`
+          `peer block w-full rounded-2xl  px-6 py-5 text-sm border-gray-300 appearance-none focus:outline-none focus:ring-0 resize-none`
         )}
         {...inputProps}
       />

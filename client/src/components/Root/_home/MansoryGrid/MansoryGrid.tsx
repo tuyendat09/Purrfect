@@ -24,7 +24,7 @@ export default function MasonryInfiniteGallery({
 
   return (
     <div>
-      <Masonry
+      {/* <Masonry
         items={allImages}
         config={{
           columns: [1, 2, 5],
@@ -32,7 +32,7 @@ export default function MasonryInfiniteGallery({
           media: [640, 768, 1024],
         }}
         render={(item) => <MansoryItem Element={item} />}
-      />
+      /> */}
 
       <div ref={loadMoreRef} style={{ height: 1 }} />
 

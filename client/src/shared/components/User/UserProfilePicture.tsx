@@ -21,7 +21,7 @@ export default function UserProfilePicture({
   size = "sm",
 }: UserProfilePictureProps) {
   const profilePicture =
-    userProfilePicture === "default-user-profile" || !userProfilePicture
+    userProfilePicture === "default-user-picture" || !userProfilePicture
       ? UserDefaultPicture
       : userProfilePicture;
 

@@ -14,15 +14,25 @@ import FlagElement from "../Icon/FlagIcon";
 import { ChevronDown, NewCluster, NewImage } from "../Icon";
 import { lazy } from "react";
 import useToggle from "@/shared/hook/useToggle";
-import useUser from "@/shared/hook/useAuth";
+import useAuth from "@/shared/hook/useAuth";
 import UserProfilePicture from "../User/UserProfilePicture";
+import { PublicUser } from "@/shared/types/User";
+import { useAuthStore } from "@/shared/store/authStore";
 
 const CreateClusterModal = lazy(
   () => import("../Modal/CreateClustserModal/CreateClusterModal")
 );
 
-export default function SiteLink() {
-  const { handleLogout, data } = useUser();
+interface SiteLinkProps {
+  user: PublicUser;
+}
+
+export default function SiteLink({ user }: SiteLinkProps) {
+  const { handleLogout } = useAuth();
+
+  const setUser = useAuthStore((s) => s.setUser);
+  setUser(user);
+
   const { toggle, handleToggle } = useToggle();
 
   return (
@@ -81,10 +91,10 @@ export default function SiteLink() {
         </div>
       </Link>
 
-      <Link href={data?.user.username || ""}>
+      <Link href={(user && user.username) || ""}>
         <div className="hover:bg-gray-neutral-300  p-2 rounded-full">
           <UserProfilePicture
-            userProfilePicture={data && data.user.profilePicture}
+            userProfilePicture={user && user.profilePicture}
           />
         </div>
       </Link>
