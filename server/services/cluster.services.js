@@ -1,7 +1,7 @@
 const Cluster = require("../models/Cluster");
 const isDocumentExist = require("../utils/isDocumentExist");
 const { getCacheKey, getOrSetCache } = require("../utils/redisCache");
-const verifyEmptyData = require("../utils/verifyEmptyData");
+const verifyUtils = require("../utils/verify.utils");
 const redis = require("../redisClient");
 const User = require("../models/User");
 
@@ -53,7 +53,7 @@ exports.handleCreateCluster = async (newClusterData) => {
   const { clusterName } = newClusterData;
 
   const clusterDuplicated = await checkDuplicatedCluster(clusterName);
-  const verifyClusterData = verifyEmptyData(newClusterData);
+  const verifyClusterData = verifyUtilsverifyEmptyData(newClusterData);
 
   if (!clusterDuplicated.success) return clusterDuplicated;
   if (!verifyClusterData.success) return verifyClusterData;

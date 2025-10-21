@@ -158,7 +158,7 @@ async function uploadToProfilePicutreToDrive(
   return fileId;
 }
 
-async function deleteFile(fileId) {
+exports.handleDeleteFile = async (fileId) => {
   if (!fileId) return;
   const drive = google.drive({ version: "v3", auth });
   try {
@@ -166,7 +166,7 @@ async function deleteFile(fileId) {
   } catch (error) {
     console.warn("Không thể xóa ảnh cũ:", error.message);
   }
-}
+};
 
 exports.handleUpdateUserImage = async (newFile) => {
   try {

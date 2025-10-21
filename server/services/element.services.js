@@ -83,7 +83,13 @@ function handlePaginateElement(params = {}) {
 }
 
 async function queryElement({ filter, sort, skip, limit }) {
-  return await Element.find(filter).sort(sort).skip(skip).limit(limit);
+  const query = Element.find(filter).sort(sort).skip(skip).limit(limit);
+
+  if (!filter._id || (typeof filter._id === "object" && filter._id.$ne)) {
+    query.select("-embedding -autoTags -imageUrl -uploadBy");
+  }
+
+  return await query;
 }
 
 const clearUserElementCache = async (userId) => {
@@ -282,7 +288,6 @@ exports.handleQueryClusterElements = async ({
   return await fetchClusterElementsFromDB(clusterId, userId, page, limit);
 };
 
-
 // router.get("/user/:userId/followed-elements", async (req, res) => {
 //   try {
 //     const userId = req.params.userId;
@@ -312,4 +317,3 @@ exports.handleQueryClusterElements = async ({
 //     res.status(500).json({ message: "Server error" });
 //   }
 // });
-

@@ -33,7 +33,7 @@ const userSchema = new Schema(
 
     profilePicture: {
       type: String,
-      default: "default-user-profile",
+      default: "default-user-picture",
     },
 
     userRole: {
@@ -44,7 +44,7 @@ const userSchema = new Schema(
     },
   },
   {
-    timestamps: { createdAt: true, updatedAt: false },
+    timestamps: { createdAt: true, updatedAt: true },
   }
 );
 

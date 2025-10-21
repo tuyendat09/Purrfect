@@ -2,13 +2,12 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const TempUser = require("../models/TempUser");
 const { sendOtpEmail, generateOTP } = require("../utils/sendOTP");
-const { isValidEmail, isValidPassword } = require("../utils/verifyResigerData");
+const verifyUtils = require("../utils/verify.utils");
 const isDocumentExist = require("../utils/isDocumentExist");
 const {
   generateToken,
   generateRefreshToken,
 } = require("../utils/generateToken");
-const verifyEmptyData = require("../utils/verifyEmptyData");
 const { verifyRefreshToken } = require("../utils/verifyJWT");
 const { getOrSetCache } = require("../utils/redisCache");
 const userUtils = require("../utils/user.utils");
@@ -57,9 +56,13 @@ const createOrUpdateTempUser = async (newUserData, otp) => {
 };
 
 const validateRegisterInput = ({ email, password }) => {
-  if (!isValidEmail(email)) return { success: false, code: "INVALID_EMAIL" };
-  if (!isValidPassword(password))
+  if (!verifyUtils.isValidEmail(email)) {
+    return { success: false, code: "INVALID_EMAIL" };
+  }
+
+  if (!verifyUtils.isValidPassword(password)) {
     return { success: false, code: "INVALID_PASSWORD" };
+  }
   return { success: true };
 };
 
@@ -143,7 +146,7 @@ exports.handleVerifyOTP = async (verifyData, req) => {
 };
 
 const checkCredentials = async (loginData) => {
-  const verifyCredentialsData = verifyEmptyData(loginData);
+  const verifyCredentialsData = verifyUtils.verifyEmptyData(loginData);
 
   if (!verifyCredentialsData.success) return verifyCredentialsData;
 
@@ -206,7 +209,7 @@ exports.handleRefreshToken = async (refreshToken, req) => {
 
 exports.handleGetUser = async (userId) => {
   const cacheField = "info";
-  
+
   const user = await getOrSetCache(userId, cacheField, async () => {
     const data = await userUtils.prepareUser(userId);
     if (!data.success) return data;
@@ -221,7 +224,7 @@ exports.handleGetUser = async (userId) => {
 };
 
 const prepareUserByUsername = async (username) => {
-  const user = await User.findOne({ username });
+  const user = await User.findOne({ username }).select("-password");
   if (!user) {
     return { success: false, code: "USER_NOT_FOUND" };
   }
@@ -231,6 +234,6 @@ const prepareUserByUsername = async (username) => {
 exports.handeGetUserByUsername = async (username) => {
   const result = await prepareUserByUsername(username);
   if (!result.success) return result;
-  const publicUser = userUtils.getPublicUser(result.user);
-  return { success: true, user: publicUser };
+
+  return { success: true, user: result.user };
 };

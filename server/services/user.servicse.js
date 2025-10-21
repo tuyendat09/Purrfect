@@ -1,6 +1,11 @@
 const User = require("../models/User");
-const { getOrSetCache } = require("../utils/redisCache");
-const { handleUpdateUserImage } = require("../utils/uploadToDrive");
+const {
+  handleUpdateUserImage,
+  handleDeleteFile,
+} = require("../utils/uploadToDrive");
+const bcrypt = require("bcrypt");
+
+const verifyUtils = require("../utils/verify.utils");
 const userUtils = require("../utils/user.utils");
 
 async function checkUsernameExist(username) {
@@ -17,7 +22,7 @@ async function updateUserName(user, username) {
 }
 
 const validateUserNameChange = async (userId, username) => {
-  const emptyCheck = verifyEmptyData({ username });
+  const emptyCheck = verifyUtils.verifyEmptyData(username);
   if (!emptyCheck.success) return emptyCheck;
 
   const user = await User.findById(userId);
@@ -44,12 +49,7 @@ exports.handleChangeUserName = async (userId, username) => {
   return { success: true };
 };
 
-// const handleDeleteOldProfilePicture = async () => {
-
-// }
-
 const updateProfilePicture = async (user, newImage) => {
-  console.log(user);
   user.profilePicture = newImage;
   await user.save();
   return user;
@@ -63,6 +63,20 @@ const handleCheckImageSize = (fileSize) => {
   return { success: true };
 };
 
+const handleDeleteOldProfilePicture = async (userOldProfilePicture) => {
+  if (userOldProfilePicture === "default-user-picture") {
+    return;
+  }
+
+  const queryParams = new URLSearchParams(userOldProfilePicture.split("?")[1]);
+  const oldFileId = queryParams.get("id");
+
+  if (oldFileId) {
+    await handleDeleteFile(oldFileId);
+    console.log("Deleted old file ID:", oldFileId);
+  }
+};
+
 exports.handleUpdateProfilePicture = async (userId, newImage) => {
   const result = await userUtils.prepareUser(userId);
   if (!result.success) return result;
@@ -71,7 +85,37 @@ exports.handleUpdateProfilePicture = async (userId, newImage) => {
   if (!validatedImageSize.success) return validatedImageSize;
 
   const newUserPictureUrl = await handleUpdateUserImage(newImage);
-  await updateProfilePicture(result.user, newUserPictureUrl);
+  await Promise.all([
+    handleDeleteOldProfilePicture(result.user.profilePicture),
+    updateProfilePicture(result.user, newUserPictureUrl),
+  ]);
+
   await userUtils.revalidateCache(userId);
+
+  return { success: true };
+};
+
+const updateUserData = async (userId, newUserData) => {
+  if (newUserData.password) {
+    newUserData.password = await bcrypt.hash(newUserData.password, 10);
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(userId, {
+    $set: newUserData,
+  });
+
+  if (!updatedUser) {
+    return { success: false, code: "USER_NOTFOUND" };
+  }
+  return { success: true };
+};
+
+exports.handleEditUserData = async (userId, newUserData) => {
+  const verifyEmptyData = verifyUtils.verifyEmptyData(newUserData, ["userBio"]);
+
+  if (!verifyEmptyData.success) return verifyEmptyData;
+  const updateResult = await updateUserData(userId, newUserData);
+  if (!updateResult.success) return updateResult;
+
   return { success: true };
 };

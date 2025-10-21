@@ -20,7 +20,7 @@ exports.prepareUser = async (userId) => {
 };
 
 exports.revalidateCache = async (userId) => {
-  const cacheField = "info"; // field riêng cho user info
+  const cacheField = "info"; 
 
   await getOrSetCache(
     userId,

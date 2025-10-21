@@ -139,7 +139,6 @@ exports.handleGetUser = async (req, res) => {
 };
 
 exports.handleGetUserByUsername = asyncHandler(async (req, res) => {
-  console.log("call");
   const { username } = req.query;
   const { success, user, code } = await authServices.handeGetUserByUsername(
     username
