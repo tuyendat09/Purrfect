@@ -76,7 +76,11 @@ export default function FloatingInput({
         {label}
       </label>
 
-      <div className="absolute top-1/2 -translate-y-1/2 right-6 text-white mt-1">
+      <div
+        className={`absolute top-1/2 -translate-y-1/2 right-6 ${
+          clearBackground ? "text-black" : "text-white"
+        } mt-1`}
+      >
         {isPassword ? (
           <button type="button" onClick={handleTogglePassword}>
             <PasswordToggleIcon show={showPassword} />

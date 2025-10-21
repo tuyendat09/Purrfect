@@ -1,7 +1,7 @@
 "use client";
 
 import MansoryItem from "./MansoryItem";
-import { lazy, memo } from "react";
+import { lazy } from "react";
 import { Masonry } from "react-plock";
 import { useInfiniteElements } from "./hook/useInfiniteElements";
 import { GetElementQuery } from "@/shared/types/ElementAPI";
@@ -24,7 +24,7 @@ export default function MasonryInfiniteGallery({
 
   return (
     <div>
-      {/* <Masonry
+      <Masonry
         items={allImages}
         config={{
           columns: [1, 2, 5],
@@ -32,7 +32,7 @@ export default function MasonryInfiniteGallery({
           media: [640, 768, 1024],
         }}
         render={(item) => <MansoryItem Element={item} />}
-      /> */}
+      />
 
       <div ref={loadMoreRef} style={{ height: 1 }} />
 

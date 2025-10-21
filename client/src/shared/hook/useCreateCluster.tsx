@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCluster } from "../apis/Cluster";
 import toast from "react-hot-toast";
+import { revalidateTagAPI } from "../utils/revalidateTags";
 
 export function useCreateCluster() {
   const queryClient = useQueryClient();
@@ -10,6 +11,7 @@ export function useCreateCluster() {
     mutationFn: createCluster,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cluster"] });
+      revalidateTagAPI("cluster");
     },
   });
 

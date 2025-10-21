@@ -1,9 +1,9 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useInView } from "framer-motion";
-import { handleGetElement } from "@/shared/apis/Element";
 import { GetElementQuery } from "@/shared/types/ElementAPI";
 import useDebounce from "@/shared/hook/useDebouce";
+import { handleGetElementServer } from "@/shared/apis/ElementServer";
 
 export function useInfiniteElements(
   extraQuery?: Omit<GetElementQuery, "page" | "limit">
@@ -11,14 +11,12 @@ export function useInfiniteElements(
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(loadMoreRef, { margin: "0px 0px 200px 0px" });
 
-  // const stableQuery = useMemo(() => extraQuery, [JSON.stringify(extraQuery)]);
-
   const query = useInfiniteQuery({
-    queryKey: ["masonryImages"],
-    queryFn: async ({ pageParam = 1 as number }) => {
-      return handleGetElement({
+    queryKey: ["masonryGrid"],
+    queryFn: async ({ pageParam = 1 }) => {
+      return handleGetElementServer({
         page: pageParam,
-        limit: 10,
+        limit: 20,
         ...extraQuery,
       });
     },
@@ -35,7 +33,7 @@ export function useInfiniteElements(
     if (debouncedInView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [debouncedInView, hasNextPage, isFetchingNextPage]);
+  }, [debouncedInView, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const allImages = query.data?.pages.flatMap((page) => page.element) ?? [];
 

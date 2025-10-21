@@ -17,11 +17,13 @@ const ClusterItem = ({ cluster, elementId }: ClusterItemProps) => {
         className="flex items-center w-full"
       >
         <div className="size-10 mr-4">
-          <div className="bg-red-500 w-full h-full rounded-xl overflow-hidden">
+          <div className=" w-full h-full rounded-xl overflow-hidden">
             <Image
               className="w-full h-full object-cover"
               src={cluster.createdBy.userPicture}
-              alt={cluster.createdBy.userFullname}
+              alt={cluster.createdBy.username}
+              width={50}
+              height={50}
             />
           </div>
         </div>

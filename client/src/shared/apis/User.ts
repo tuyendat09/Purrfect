@@ -1,3 +1,4 @@
+import { ParamsEditUserData } from "../types/User";
 import { createRequest } from "../utils/httpRequestBuilder";
 import { withAuthRetry } from "../utils/withAuthRetry";
 import { APIResponseType } from "./../types/APIResponseType";
@@ -12,6 +13,18 @@ export const handleUpdateUserPicture = async (
       .setPath("/api/user/change-profile-picture")
       .setBody(data)
       .setMethod("POST")
+      .send<APIResponseType>()
+  );
+};
+
+export const handleUpdateUserData = async (
+  data: ParamsEditUserData
+): Promise<APIResponseType> => {
+  return withAuthRetry(() =>
+    createRequest(DOMAIN_API)
+      .setPath("/api/user/profile-setting")
+      .setBody(data)
+      .setMethod("PUT")
       .send<APIResponseType>()
   );
 };

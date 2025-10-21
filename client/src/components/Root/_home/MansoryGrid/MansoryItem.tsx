@@ -12,10 +12,12 @@ interface MansoryItemProps {
 
 const MansoryItem = memo(function MansoryItem({ Element }: MansoryItemProps) {
   const { isLiked, _id } = Element;
-
   const [isLikedState, setIsLiked] = useState<boolean | undefined>(isLiked);
   const [openCluster, setOpenCluster] = useState<boolean>(false);
-  console.log(Element.previewImageUrl);
+
+
+
+
   return (
     <div className="relative group">
       <Image

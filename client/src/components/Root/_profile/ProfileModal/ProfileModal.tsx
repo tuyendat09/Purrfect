@@ -1,10 +1,8 @@
-import Modal from "../Modal";
-import ModalContent from "../ModalContent";
-import ModalBody from "../ModalBody";
 import ProfileSidebar from "./ProfileSidebar";
 import ProfileContent from "./ProfileContent";
 import useChangeContent from "./hook/useChangeContent";
 import { useProfile } from "@/components/Root/_profile/store/ProfileContext";
+import { Modal, ModalBody, ModalContent } from "@/shared/components/Modal";
 
 interface ProfileModalProps {
   isOpenModal: boolean;
@@ -14,7 +12,6 @@ export default function ProfileModal({
   isOpenModal,
   handleToggleModal,
 }: ProfileModalProps) {
-  
   const user = useProfile();
   const { handleChangeContent, content } = useChangeContent();
 

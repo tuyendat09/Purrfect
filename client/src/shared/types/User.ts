@@ -29,3 +29,11 @@ export interface GetUserByUsernameResponse {
   success: true;
   user: User;
 }
+
+export interface ParamsEditUserData {
+  userBio?: string;
+  userCountry?: string;
+  userBirthdate?: Date;
+  userFullname?: string;
+  password?: string;
+}

@@ -38,7 +38,6 @@ export default function useLogin() {
       const promise = mutation.mutate(values);
       return promise;
     },
-    validate: () => {},
   });
 
   return {

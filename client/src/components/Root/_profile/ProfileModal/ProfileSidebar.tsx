@@ -1,10 +1,10 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import UserProfilePicture from "../../User/UserProfilePicture";
+import UserProfilePicture from "../../../../shared/components/User/UserProfilePicture";
 
 const SIDEBAR_ITEMS = [
   { label: "Profile", state: "profile" },
-  { label: "Account", state: "account" },
   { label: "Password", state: "password" },
+  { label: "Account", state: "account" },
 ];
 
 interface ProfileSidebarProps {

@@ -1,6 +1,6 @@
 import { handleUpdateUserPicture as handleUpdateUserPictureServer } from "@/shared/apis/User";
+import { revalidateTagAPI } from "@/shared/utils/revalidateTags";
 import { toast } from "react-hot-toast";
-import { revalidateUsersTag } from "@/shared/utils/revalidateTags";
 
 export async function handleUpdateUserPicture(
   e: React.ChangeEvent<HTMLInputElement>
@@ -19,8 +19,8 @@ export async function handleUpdateUserPicture(
     error: (err) => err.message,
   });
 
-  await revalidateUsersTag("publicUser");
-  await revalidateUsersTag("users");
+  await revalidateTagAPI("publicUser");
+  await revalidateTagAPI("users");
 
   e.target.value = "";
 }

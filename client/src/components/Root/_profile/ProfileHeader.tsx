@@ -7,9 +7,7 @@ import UserProfilePicture from "@/shared/components/User/UserProfilePicture";
 import { ProfileContext, useProfile } from "./store/ProfileContext";
 import { User } from "@/shared/types/User";
 
-const ProfileModal = lazy(
-  () => import("@/shared/components/Modal/ProfileModal/ProfileModal")
-);
+const ProfileModal = lazy(() => import("./ProfileModal/ProfileModal"));
 
 type ProfileHeaderProps = {
   user?: User;

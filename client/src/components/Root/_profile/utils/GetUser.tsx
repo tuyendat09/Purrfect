@@ -7,7 +7,6 @@ import {
 import { cookies } from "next/headers";
 
 async function fetchUserByUsername(username: string, sid: string) {
-  console.log("fetch");
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_DOMAIN_API}/api/auth/by-username?username=${username}`,
     {
@@ -27,7 +26,6 @@ async function fetchUserByUsername(username: string, sid: string) {
 }
 
 async function fetchUser(sid: string) {
-  console.log("fetchUser");
   const res = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN_API}/api/auth/`, {
     method: "GET",
     headers: {
