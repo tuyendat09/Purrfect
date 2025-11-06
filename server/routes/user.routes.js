@@ -5,7 +5,7 @@ const multer = require("multer");
 const upload = multer();
 
 // PUT METHOD
-router.put("/changeUserName", userController.handleEditUserName);
+router.put("/change-username", userController.handleEditUserName);
 router.put("/profile-setting", userController.handleEditUserData);
 
 router.post(

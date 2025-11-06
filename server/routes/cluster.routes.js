@@ -4,6 +4,9 @@ const clusterController = require("../controller/cluster.controller");
 
 router.post("/create", clusterController.handleCreateCluster);
 router.get("/", clusterController.handleQueryCluster);
-router.post("/add-to-cluster", clusterController.handleAddToCluster);
+router.post(
+  "/add-or-delete-to-cluster",
+  clusterController.handleAddOrDeleteElementToCluster
+);
 
 module.exports = router;

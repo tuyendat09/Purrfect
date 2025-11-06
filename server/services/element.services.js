@@ -35,7 +35,16 @@ exports.handleCreateNewElement = async (uploadData) => {
   const { file, user } = uploadData;
   const userId = user.id;
 
-  const { embedding, tags } = await processEmbedding(file);
+  const {
+    success: processEmbeddingResult,
+    tags,
+    embedding,
+    colors,
+    code,
+  } = await processEmbedding(file);
+
+  if (!processEmbeddingResult) return { success: processEmbeddingResult, code };
+
   const { originalUrl, previewUrl } = await handleUpload(file);
 
   const newElementData = { originalUrl, previewUrl, userId, embedding, tags };
@@ -199,12 +208,12 @@ exports.handleLikeElement = async (likeElementData) => {
     await handleDeleteLikeElement(likeElementData);
     await clearUserElementCache(likeElementData.userId);
 
-    return { success: true, code: "LIKED_ELEMENT" };
+    return { success: true, code: "UNLIKED_ELEMENT" };
   } else {
     await handleCreateLikeElement(likeElementData);
     await clearUserElementCache(likeElementData.userId);
 
-    return { success: true, code: "UNLIKED_ELEMENT" };
+    return { success: true, code: "LIKED_ELEMENT" };
   }
 };
 
@@ -224,9 +233,10 @@ async function queryClusterElementsPage(elementIds, { skip, limit }) {
 
   const elements = await Element.find({ _id: { $in: pageElementIds } })
     .sort({ createdAt: -1 })
+    .select("-embedding -autoTags -imageUrl -uploadBy")
     .lean();
 
-  return { elements, pageElementIds };
+  return { elements, pageElementIds };  
 }
 
 async function queryUserLikes(userId, elementIds) {
@@ -247,8 +257,11 @@ function mapElementsWithLike(elements, likedIds) {
   }));
 }
 
-async function fetchClusterElementsFromDB(clusterId, userId, page, limit) {
-  const cluster = await Cluster.findById(clusterId).select("elementIds").lean();
+async function fetchClusterElementsFromDB(clusterName, userId, page, limit) {
+  const cluster = await Cluster.findOne({ clusterName: clusterName })
+    .select("elementIds")
+    .lean();
+
   if (!cluster) throw new Error("Cluster not found");
 
   const total = cluster.elementIds.length;
@@ -261,6 +274,7 @@ async function fetchClusterElementsFromDB(clusterId, userId, page, limit) {
     elementIds,
     { skip, limit }
   );
+
   const likedIds = await queryUserLikes(userId, pageElementIds);
 
   const elementsWithLike = mapElementsWithLike(elements, likedIds);
@@ -279,13 +293,13 @@ async function fetchClusterElementsFromDB(clusterId, userId, page, limit) {
 }
 
 exports.handleQueryClusterElements = async ({
-  clusterId,
+  clusterName,
   userId,
   page = 1,
   limit = 25,
 }) => {
-  console.log(clusterId);
-  return await fetchClusterElementsFromDB(clusterId, userId, page, limit);
+  console.log(clusterName);
+  return await fetchClusterElementsFromDB(clusterName, userId, page, limit);
 };
 
 // router.get("/user/:userId/followed-elements", async (req, res) => {

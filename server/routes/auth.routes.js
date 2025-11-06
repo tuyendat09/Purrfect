@@ -20,11 +20,5 @@ router.post("/refresh-token", authController.handleRefreshToken);
 router.post("/verify-token", checkRole([]), authController.handleVerifyToken);
 
 // PUT METHOD
-router.put(
-  "/changeUserName",
-  checkRole(["user"]),
-  authController.handleEditUserName
-);
-
 
 module.exports = router;

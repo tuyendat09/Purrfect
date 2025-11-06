@@ -13,8 +13,18 @@ function cleanTags(rawTags) {
   return result;
 }
 
+function handleReponse(status, tags, embedding, colors) {
+  if (status == "rejected") {
+    return { success: false, code: "IMAGE_INVALID" };
+  }
+
+  const cleanTagList = cleanTags(tags);
+
+  return { success: true, tags: cleanTagList, embedding, colors };
+}
+
 exports.getEmbedCLIP = async (file) => {
-  const response = await fetch("http://localhost:8000/encode-image", {
+  const response = await fetch("http://localhost:8000/process-image", {
     method: "POST",
     body: file.buffer,
     headers: {
@@ -23,12 +33,7 @@ exports.getEmbedCLIP = async (file) => {
   });
 
   const responseJSON = await response.json();
-  const { embedding, tags } = responseJSON;
+  const { status, tags, embedding, colors } = responseJSON;
 
-  const cleanTagList = cleanTags(tags);
-
-  return {
-    embedding,
-    tags: cleanTagList,
-  };
+  return handleReponse(status, tags, embedding, colors);
 };

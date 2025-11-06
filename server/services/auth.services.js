@@ -1,16 +1,16 @@
-const bcrypt = require("bcrypt");
+// === MODEL ===
 const User = require("../models/User");
 const TempUser = require("../models/TempUser");
-const { sendOtpEmail, generateOTP } = require("../utils/sendOTP");
+
+// === UTILS ===
 const verifyUtils = require("../utils/verify.utils");
-const isDocumentExist = require("../utils/isDocumentExist");
-const {
-  generateToken,
-  generateRefreshToken,
-} = require("../utils/generateToken");
-const { verifyRefreshToken } = require("../utils/verifyJWT");
-const { getOrSetCache } = require("../utils/redisCache");
+const jwtUtils = require("../utils/jwt.utils");
 const userUtils = require("../utils/user.utils");
+
+const isDocumentExist = require("../utils/isDocumentExist");
+const { getOrSetCache } = require("../utils/redisCache");
+const { sendOtpEmail, generateOTP } = require("../utils/sendOTP");
+const bcrypt = require("bcrypt");
 
 const isUserExist = (email) => {
   return isDocumentExist(User, { email: email });
@@ -166,8 +166,8 @@ const checkCredentials = async (loginData) => {
 };
 
 const handleStoreToken = (user, req) => {
-  const token = generateToken(user);
-  const refreshToken = generateRefreshToken(user);
+  const token = jwtUtils.generateToken(user);
+  const refreshToken = jwtUtils.generateRefreshToken(user);
 
   req.session.token = token;
   req.session.refreshToken = refreshToken;
@@ -189,7 +189,7 @@ exports.handleLogin = async (loginData, req) => {
 const verifyTokenAndGetUser = async (refreshToken) => {
   if (!refreshToken) return { success: false, code: "NO_TOKEN" };
 
-  const { success, decoded } = verifyRefreshToken(refreshToken);
+  const { success, decoded } = jwtUtils.verifyRefreshToken(refreshToken);
   if (!success) return { success: false, code: "INVALID_TOKEN" };
 
   const user = await User.findById(decoded.id);

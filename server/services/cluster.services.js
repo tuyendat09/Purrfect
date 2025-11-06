@@ -21,7 +21,6 @@ const revalidateClusterCache = async (userId) => {
 
   const fields = await redis.hkeys(cacheKey);
 
-  // Chỉ chọn những field bắt đầu bằng "clusters:"
   const clusterFields = fields.filter((f) => f.startsWith("clusters:"));
 
   if (clusterFields.length > 0) {
@@ -53,7 +52,7 @@ exports.handleCreateCluster = async (newClusterData) => {
   const { clusterName } = newClusterData;
 
   const clusterDuplicated = await checkDuplicatedCluster(clusterName);
-  const verifyClusterData = verifyUtilsverifyEmptyData(newClusterData);
+  const verifyClusterData = verifyUtils.verifyEmptyData(newClusterData);
 
   if (!clusterDuplicated.success) return clusterDuplicated;
   if (!verifyClusterData.success) return verifyClusterData;
@@ -189,19 +188,38 @@ async function validateAddElementToCluster({ elementId, clusterId }) {
 
   if (alreadyExists) {
     return {
-      success: false,
-      code: "ELEMENT_EXIST",
+      success: true,
+      alreadyExist: true,
+      cluster: cluster,
     };
   }
   return { success: true, cluster: cluster };
 }
 
+async function removeElementFromCluster(cluster, elementId) {
+  cluster.elementIds.pull(elementId);
+  await cluster.save();
+}
 async function addElementToCluster(cluster, elementId) {
   cluster.elementIds.push(elementId);
   await cluster.save();
 }
 
-exports.handleAddElementToCluster = async ({
+async function addOrDeleteElementFromCluster(
+  alreadyExists,
+  cluster,
+  elementId
+) {
+  if (alreadyExists) {
+    await removeElementFromCluster(cluster, elementId);
+    return { code: "REMOVED" };
+  } else {
+    await addElementToCluster(cluster, elementId);
+    return { code: "ADDED" };
+  }
+}
+
+exports.handleAddOrDeleteElementToCluster = async ({
   elementId,
   clusterId,
   userId,
@@ -211,8 +229,14 @@ exports.handleAddElementToCluster = async ({
     clusterId,
   });
   if (!validateData.success) return validateData;
-  await addElementToCluster(validateData.cluster, elementId);
-  console.log(userId);
+
+  const { code } = await addOrDeleteElementFromCluster(
+    validateData.alreadyExist,
+    validateData.cluster,
+    elementId
+  );
+
   await revalidateClusterCache(userId);
-  return { success: true };
+
+  return { success: true, code: code };
 };

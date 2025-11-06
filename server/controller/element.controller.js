@@ -1,17 +1,21 @@
 const asyncHandler = require("../middleware/asyncHandler");
 const elementServices = require("../services/element.services");
+const reponseUtils = require("../utils/reponse.utils");
 
 exports.handleCreateNewElement = asyncHandler(async (req, res) => {
   const { file, user } = req;
 
   const uploadData = { file, user };
 
-  const { success } = await elementServices.handleCreateNewElement(uploadData);
+  const { success, code } = await elementServices.handleCreateNewElement(
+    uploadData
+  );
 
-  if (!success) {
-    let message = "Something wrong :(";
-    return res.status(400).json({ success: false, message });
-  }
+  const errorMessages = {
+    IMAGE_INVALID: "This image doesn't look right?",
+  };
+
+  if (!success) return reponseUtils.sendErrorResponse(res, code, errorMessages);
 
   return res.status(200).json({
     success: true,
@@ -72,11 +76,12 @@ exports.handleLikeElement = asyncHandler(async (req, res) => {
 
 exports.handleQueryClusterElements = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-  const { clusterId } = req.query;
+  const { clusterName } = req.query;
 
-  const queryData = { userId, clusterId };
+  const queryData = { userId, clusterName };
   const { success, elements, hasNextPage, total } =
     await elementServices.handleQueryClusterElements(queryData);
+
   return res.status(200).json({
     success: true,
     element: elements,

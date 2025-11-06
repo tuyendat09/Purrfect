@@ -44,7 +44,7 @@ exports.handleChangeUserName = async (userId, username) => {
   if (!success) return { success, code };
 
   await updateUserName(user, username);
-  await revalidateCache(userId);
+  await userUtils.revalidateCache(userId);
 
   return { success: true };
 };
