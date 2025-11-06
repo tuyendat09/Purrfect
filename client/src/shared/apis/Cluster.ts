@@ -40,7 +40,7 @@ export const handleAddElementToCluster = async (
 ): Promise<APIResponseType> => {
   return withAuthRetry(() =>
     createRequest(DOMAIN_API)
-      .setPath("/api/cluster/add-to-cluster")
+      .setPath("/api/cluster/add-or-delete-to-cluster")
       .setMethod("POST")
       .setBody(data)
       .send<APIResponseType>()

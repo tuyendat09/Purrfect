@@ -35,6 +35,8 @@ export default function SiteLink({ user }: SiteLinkProps) {
 
   const { toggle, handleToggle } = useToggle();
 
+  const userProfileLink = user.username;
+
   return (
     <div className="flex items-center gap-2">
       <DropMenu className="mr-4">
@@ -91,11 +93,9 @@ export default function SiteLink({ user }: SiteLinkProps) {
         </div>
       </Link>
 
-      <Link href={(user && user.username) || ""}>
+      <Link href={userProfileLink}>
         <div className="hover:bg-gray-neutral-300  p-2 rounded-full">
-          <UserProfilePicture
-            userProfilePicture={user && user.profilePicture}
-          />
+          <UserProfilePicture userProfilePicture={user.profilePicture} />
         </div>
       </Link>
 
@@ -107,12 +107,27 @@ export default function SiteLink({ user }: SiteLinkProps) {
         </DropMenuTrigger>
 
         <DropDown className="p-2">
-          <div className="">
-            <DropMenuItem>Profile</DropMenuItem>
-            <DropMenuItem>Settings</DropMenuItem>
+          <div className="bg-gray-neutral-400 p-2 rounded-lg ">
+            <Link
+              href={userProfileLink}
+              className="flex items-center justify-center flex-col my-3"
+            >
+              <UserProfilePicture
+                size="md"
+                userProfilePicture={user && user.profilePicture}
+              />
+              <p className="font-serif">{user.userFullname}</p>
+            </Link>
             <DropMenuItem
+              className="font-semibold text-sm"
+              customHoverClass="hover:text-gray-neutral-700"
+            >
+              <Link href={userProfileLink}>Profile</Link>
+            </DropMenuItem>
+            <DropMenuItem
+              className="font-semibold text-sm"
+              customHoverClass="hover:text-gray-neutral-700"
               onClick={() => handleLogout()}
-              className="text-red-500"
             >
               Logout
             </DropMenuItem>

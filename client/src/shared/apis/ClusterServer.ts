@@ -21,6 +21,7 @@ export const handleGetClusterServer = async (
     .setHeaders({
       Cookie: `sid=${sid}`,
     })
+    .setTags(["cluster"])
     .setCache(10)
     .send<GetClusterQueryResponse>();
   return response;

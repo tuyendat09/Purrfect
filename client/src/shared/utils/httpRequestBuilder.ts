@@ -13,7 +13,8 @@ export const createRequest = <
   let body: B | any = null;
   let path = "";
   let query: Q = {} as Q;
-  let revalidate: number | null = null; // 👈 thêm option cache
+  let revalidate: number | null = null;
+  let tags: string[] = []; // 👈 thêm tags
 
   const builder = {
     setMethod(m: Method) {
@@ -40,6 +41,10 @@ export const createRequest = <
       revalidate = seconds;
       return builder;
     },
+    setTags(t: string[]) {
+      tags = [...t];
+      return builder;
+    },
     async send<R>(): Promise<R> {
       const url = new URL(path, baseUrl);
       if (Object.keys(query).length) {
@@ -49,7 +54,9 @@ export const createRequest = <
       const isFormData =
         typeof FormData !== "undefined" && body instanceof FormData;
 
-      const fetchOptions: RequestInit & { next?: { revalidate: number } } = {
+      const fetchOptions: RequestInit & {
+        next?: { revalidate?: number; tags?: string[] };
+      } = {
         method,
         headers: isFormData
           ? headers
@@ -63,9 +70,12 @@ export const createRequest = <
             : undefined,
       };
 
-      // 👇 nếu có setCache thì thêm next.revalidate
-      if (revalidate) {
-        (fetchOptions as any).next = { revalidate };
+      // 👇 nếu có setCache hoặc setTags thì thêm next
+      if (revalidate !== null || tags.length) {
+        (fetchOptions as any).next = {
+          ...(revalidate !== null ? { revalidate } : {}),
+          ...(tags.length ? { tags } : {}),
+        };
       }
 
       const response = await fetch(url.toString(), fetchOptions);

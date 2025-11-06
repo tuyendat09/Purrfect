@@ -5,7 +5,7 @@ import FormHeader from "@/shared/components/Form/FormHeader";
 import useClaimUsername from "./hook/useClaimUsername";
 
 export default function ClaimUsernameForm() {
-  const { username, handleInputChange, handleChangeUsername } =
+  const { username, oldUsername, handleInputChange, handleChangeUsername } =
     useClaimUsername();
 
   return (
@@ -23,6 +23,7 @@ export default function ClaimUsernameForm() {
             <div className="flex items-center rounded-full border-[#242424] border">
               <span className="pl-4">@</span>
               <input
+                value={username}
                 onChange={(e) => handleInputChange(e)}
                 className=" w-full py-4 focus:outline-none"
                 type="text"
@@ -35,6 +36,7 @@ export default function ClaimUsernameForm() {
             <button />
           </form>
           <Button
+            isDisable={oldUsername.trim() == username.trim()}
             onClick={() => handleChangeUsername()}
             size="lg"
             type="button"

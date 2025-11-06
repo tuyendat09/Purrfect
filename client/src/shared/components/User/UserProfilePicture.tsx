@@ -4,7 +4,7 @@ import Image from "next/image";
 
 interface UserProfilePictureProps {
   userProfilePicture?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 const sizeClasses: Record<
@@ -12,8 +12,9 @@ const sizeClasses: Record<
   string
 > = {
   sm: "size-8",
-  md: "w-[96px] h-[96px]",
-  lg: "w-[128px] h-[128px]",
+  md: "w-[60px] h-[60px]",
+  lg: "w-[90px] h-[90px]",
+  xl: "w-[128px] h-[128px]",
 };
 
 export default function UserProfilePicture({

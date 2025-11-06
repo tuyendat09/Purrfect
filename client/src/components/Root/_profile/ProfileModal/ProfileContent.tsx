@@ -1,7 +1,6 @@
 import { JSX, lazy } from "react";
 
 const ProfileSetting = lazy(() => import("./ProfileSetting/ProfileSetting"));
-const AccountSetting = lazy(() => import("./ProfileSetting/AccountSetting"));
 const PasswordSetting = lazy(() => import("./ProfileSetting/PasswordSetting"));
 
 interface ProfileContentProps {
@@ -14,9 +13,6 @@ export default function ProfileContent({ contentState }: ProfileContentProps) {
   switch (contentState) {
     case "profile":
       content = <ProfileSetting />;
-      break;
-    case "account":
-      content = <AccountSetting />;
       break;
     case "password":
       content = <PasswordSetting />;

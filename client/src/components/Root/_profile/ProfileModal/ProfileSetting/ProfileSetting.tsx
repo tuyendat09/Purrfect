@@ -4,6 +4,7 @@ import FloatingTextarea from "@/shared/components/Input/FloatingTextarea";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import useProfileSetting from "../hook/useProfileSetting";
 import { useProfile } from "../../store/ProfileContext";
+import Link from "next/link";
 
 export default function ProfileSetting() {
   const { formik } = useProfileSetting();
@@ -18,6 +19,11 @@ export default function ProfileSetting() {
         label="Username"
         name="username"
         readOnly
+        endContent={
+          <Link href="/claim-username">
+            <Icon icon="ri:edit-line" width="20" height="20" />
+          </Link>
+        }
       />
       <FloatingInput
         value={formik.values.userFullname}

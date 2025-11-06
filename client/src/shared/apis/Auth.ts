@@ -146,7 +146,7 @@ export const changeUsername = async (
 ): Promise<APIResponseType> => {
   return withAuthRetry(() =>
     createRequest(DOMAIN_API)
-      .setPath("/api/auth/changeUserName")
+      .setPath("/api/user/change-username")
       .setMethod("PUT")
       .setHeaders({
         "Content-Type": "application/json",

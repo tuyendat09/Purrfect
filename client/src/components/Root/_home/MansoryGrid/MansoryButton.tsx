@@ -52,7 +52,7 @@ export function MansoryClusterButton({
   const { toggle, handleToggle } = useToggle();
 
   function toggleOpenCluster(e: React.MouseEvent) {
-    e.stopPropagation(); // Ngăn lan click
+    e.stopPropagation();
     setOpenCluster((prevState) => !prevState);
   }
 

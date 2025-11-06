@@ -1,5 +1,6 @@
 import Logo from "@/shared/components/Logo";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 interface ProfileClusterItemProps {
   clusterName: string;
@@ -12,8 +13,10 @@ export default function ProfileClusterItem({
   clusterThumbnail,
   clusterElement,
 }: ProfileClusterItemProps) {
+  const params = useParams<{ username: string }>();
+
   return (
-    <Link href="/">
+    <Link href={`${params.username}/${clusterName}`}>
       <div className="flex flex-col w-[171px] sm:w-[312px] cursor-pointer ">
         <div className="bg-gray-neutral-200 rounded-3xl group overflow-hidden relative flex justify-center items-center ">
           <div className="group-hover:bg-[#cccbc9] absolute   transition w-full h-full" />

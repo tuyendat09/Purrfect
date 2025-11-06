@@ -16,6 +16,7 @@ import { clsx } from "clsx";
 import { useGSAP } from "@gsap/react";
 import MasonryInfiniteGallery from "../_home/MansoryGrid/MansoryGrid";
 import { useEffect, useRef, useState } from "react";
+import { handleGetElementServer } from "@/shared/apis/ElementServer";
 
 export default function Element({ id }: { id: string }) {
   const { element } = useElementQuery(id);
@@ -29,8 +30,6 @@ export default function Element({ id }: { id: string }) {
   const isInView = useInView(endOfCommentsRef, {
     margin: "0px 0px -100% 0px",
   });
-
-  console.log(elementTags);
 
   const [isScrollable, setIsScrollable] = useState(true);
 
@@ -113,7 +112,6 @@ export default function Element({ id }: { id: string }) {
                     </div>
                   ))}
 
-                  {/* 🔽 Đây là phần tử dùng để detect scroll cuối comment */}
                   <div ref={endOfCommentsRef} className="h-1" />
                 </div>
               </div>
@@ -124,6 +122,7 @@ export default function Element({ id }: { id: string }) {
         <div className="mt-10 px-10 pb-10">
           {element && (
             <MasonryInfiniteGallery
+              fetchFn={handleGetElementServer}
               query={{ tag: JSON.stringify(elementTags), exceptId: id }}
             />
           )}

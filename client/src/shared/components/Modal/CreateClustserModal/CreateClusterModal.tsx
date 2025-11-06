@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from "react";
 import NormalInput from "../../Input/NormalInput";
 import Button from "../../Button";

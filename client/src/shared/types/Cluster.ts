@@ -36,7 +36,7 @@ export interface Cluster {
   createdBy: {
     userId: string;
     userPicture: string;
-    userFullname: string;
+    username: string;
   };
   elementIds: string[];
   createdAt: string;

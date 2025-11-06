@@ -1,15 +1,31 @@
 "use client";
 
+import { getUserServer } from "@/components/Root/_profile/utils/GetUser";
 import { ParamsChangeUsername } from "@/shared/types/AuthAPI";
 import { sleep } from "@/shared/utils/sleep";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 export default function useClaimUsername() {
   const [username, setUsername] = useState<string>("");
+  const [oldUsername, setOldUsername] = useState<string>("");
   const router = useRouter();
+
+  const { data } = useQuery({
+    queryKey: ["users"],
+    queryFn: getUserServer,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (data) {
+      setUsername(data?.user.username);
+      setOldUsername(data?.user.username);
+    }
+  }, [data]);
 
   const mutation = useMutation({
     mutationFn: async (values: ParamsChangeUsername) => {
@@ -38,9 +54,10 @@ export default function useClaimUsername() {
 
   return {
     username,
+    oldUsername,
     handleInputChange,
     handleChangeUsername: () => {
-      mutation.mutate({ username }); // 👈 Gửi API với username hiện tại
+      mutation.mutate({ username });
     },
     isPending: mutation.isPending,
     error: mutation.error,

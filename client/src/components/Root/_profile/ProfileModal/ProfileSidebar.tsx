@@ -4,7 +4,6 @@ import UserProfilePicture from "../../../../shared/components/User/UserProfilePi
 const SIDEBAR_ITEMS = [
   { label: "Profile", state: "profile" },
   { label: "Password", state: "password" },
-  { label: "Account", state: "account" },
 ];
 
 interface ProfileSidebarProps {

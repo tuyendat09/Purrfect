@@ -4,7 +4,10 @@ import MansoryItem from "./MansoryItem";
 import { lazy } from "react";
 import { Masonry } from "react-plock";
 import { useInfiniteElements } from "./hook/useInfiniteElements";
-import { GetElementQuery } from "@/shared/types/ElementAPI";
+import {
+  GetElementQuery,
+  GetELementQueryResponse,
+} from "@/shared/types/ElementAPI";
 
 const DotLottieReact = lazy(() =>
   import("@lottiefiles/dotlottie-react").then((mod) => ({
@@ -14,13 +17,15 @@ const DotLottieReact = lazy(() =>
 
 interface MasonryInfiniteGalleryProps {
   query?: Omit<GetElementQuery, "page" | "limit">;
+  fetchFn: (params: GetElementQuery) => Promise<GetELementQueryResponse>;
 }
 
 export default function MasonryInfiniteGallery({
+  fetchFn,
   query,
 }: MasonryInfiniteGalleryProps) {
   const { allImages, loadMoreRef, isLoading, isFetchingNextPage } =
-    useInfiniteElements(query);
+    useInfiniteElements({ fetchFn, extraQuery: query });
 
   return (
     <div>

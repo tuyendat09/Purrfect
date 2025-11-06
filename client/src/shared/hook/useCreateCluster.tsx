@@ -9,9 +9,9 @@ export function useCreateCluster() {
 
   const mutation = useMutation({
     mutationFn: createCluster,
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["cluster"] });
-      revalidateTagAPI("cluster");
+      await revalidateTagAPI("cluster");
     },
   });
 

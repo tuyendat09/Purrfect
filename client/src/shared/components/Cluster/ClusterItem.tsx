@@ -13,7 +13,7 @@ const ClusterItem = ({ cluster, elementId }: ClusterItemProps) => {
   return (
     <li className="hover:bg-gray-neutral-400 p-2 rounded-2xl transition">
       <button
-        onClick={() => handleAddElement(elementId, cluster._id)}
+        onClick={() => handleAddElement(elementId as string, cluster._id)}
         className="flex items-center w-full"
       >
         <div className="size-10 mr-4">
